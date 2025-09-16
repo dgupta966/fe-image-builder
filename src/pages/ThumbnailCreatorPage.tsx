@@ -1,0 +1,630 @@
+import React, { useState } from 'react';
+import {
+  Container,
+  Typography,
+  Box,
+  Card,
+  CardContent,
+  Button,
+  Grid,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Chip,
+  Paper,
+  Avatar,
+  LinearProgress,
+  Alert,
+  Divider,
+  IconButton,
+  Tooltip,
+} from '@mui/material';
+import {
+  AutoAwesome,
+  Download,
+  CloudUpload,
+  Palette,
+  PhotoLibrary,
+  Close,
+  Refresh,
+} from '@mui/icons-material';
+import { type ThumbnailOptions } from '../types/index.ts';
+import { GeminiService } from '../services/googleServices.ts';
+
+interface UploadedImage {
+  file: File;
+  base64: string;
+  preview: string;
+}
+
+interface GeneratedThumbnail {
+  id: string;
+  imageUrl: string;
+  prompt: string;
+  style: string;
+  category: string;
+}
+
+const ThumbnailCreatorPage: React.FC = () => {
+  const [uploadedImage, setUploadedImage] = useState<UploadedImage | null>(null);
+  const [thumbnailOptions, setThumbnailOptions] = useState<ThumbnailOptions>({
+    title: '',
+    description: '',
+    category: '',
+    style: 'modern',
+    primaryColor: '#1976d2',
+    backgroundColor: '#ffffff',
+  });
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [generatedThumbnails, setGeneratedThumbnails] = useState<GeneratedThumbnail[]>([]);
+  const [geminiService] = useState(() => new GeminiService());
+  const [error, setError] = useState<string | null>(null);
+
+  // Convert file to base64
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          resolve(reader.result);
+        } else {
+          reject(new Error('Failed to convert file to base64'));
+        }
+      };
+      reader.onerror = reject;
+    });
+  };
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setError('Please upload a valid image file');
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      setError('Image size should be less than 10MB');
+      return;
+    }
+
+    try {
+      setError(null);
+      const base64 = await fileToBase64(file);
+      const preview = URL.createObjectURL(file);
+      
+      setUploadedImage({
+        file,
+        base64,
+        preview,
+      });
+    } catch (error) {
+      console.error('Error processing image:', error);
+      setError('Failed to process the image');
+    }
+  };
+
+  const removeUploadedImage = () => {
+    if (uploadedImage?.preview) {
+      URL.revokeObjectURL(uploadedImage.preview);
+    }
+    setUploadedImage(null);
+    setGeneratedThumbnails([]);
+  };
+
+  const downloadThumbnail = (thumbnailUrl: string, index: number) => {
+    try {
+      // Handle base64 images
+      if (thumbnailUrl.startsWith('data:')) {
+        const link = document.createElement('a');
+        link.href = thumbnailUrl;
+        link.download = `ai-thumbnail-${index + 1}-${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        // Handle regular URLs
+        const link = document.createElement('a');
+        link.href = thumbnailUrl;
+        link.download = `ai-thumbnail-${index + 1}-${Date.now()}.png`;
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    } catch (error) {
+      console.error('Error downloading thumbnail:', error);
+      setError('Failed to download thumbnail. Please try again.');
+    }
+  };
+
+  const categories = [
+    'Technology',
+    'Food & Cooking',
+    'Travel',
+    'Education',
+    'Entertainment',
+    'Business',
+    'Health & Fitness',
+    'DIY & Crafts',
+    'Music',
+    'Gaming',
+  ];
+
+  const styles = [
+    { value: 'modern', label: 'Modern' },
+    { value: 'classic', label: 'Classic' },
+    { value: 'bold', label: 'Bold' },
+    { value: 'minimal', label: 'Minimal' },
+  ];
+
+  const handleGenerateThumbnail = async () => {
+    if (!thumbnailOptions.title || !thumbnailOptions.category) {
+      setError('Please fill in the title and category fields');
+      return;
+    }
+
+    setIsGenerating(true);
+    setProgress(0);
+    setError(null);
+
+    try {
+      // Create a direct prompt for image generation
+      setProgress(25);
+      const basePrompt = `Create a professional ${thumbnailOptions.style} style thumbnail for ${thumbnailOptions.category} content with the title "${thumbnailOptions.title}". ${thumbnailOptions.description ? `Description: ${thumbnailOptions.description}` : ''}`;
+
+      console.log('Generating thumbnail with prompt:', basePrompt);
+
+      // Generate single thumbnail
+      setProgress(50);
+      let thumbnailBase64: string;
+      
+      if (uploadedImage) {
+        // Generate thumbnail with uploaded image using Gemini 2.5 Flash Image
+        setProgress(75);
+        thumbnailBase64 = await geminiService.generateThumbnailWithImage(uploadedImage.base64, {
+          title: thumbnailOptions.title,
+          description: thumbnailOptions.description,
+          category: thumbnailOptions.category,
+          style: thumbnailOptions.style,
+          primaryColor: thumbnailOptions.primaryColor,
+          backgroundColor: thumbnailOptions.backgroundColor,
+        });
+      } else {
+        // Generate thumbnail using text-only with Gemini 2.5 Flash Image
+        setProgress(75);
+        thumbnailBase64 = await geminiService.generateThumbnailImage(basePrompt, {
+          width: 1280,
+          height: 720,
+          style: thumbnailOptions.style,
+        });
+      }
+
+      // Create single thumbnail result
+      const thumbnail = {
+        id: `thumbnail-${Date.now()}`,
+        imageUrl: thumbnailBase64,
+        prompt: uploadedImage ? 'AI-generated thumbnail with uploaded image' : basePrompt,
+        style: thumbnailOptions.style,
+        category: thumbnailOptions.category,
+      };
+
+      setProgress(100);
+      setGeneratedThumbnails([thumbnail]);
+
+    } catch (error) {
+      console.error('Thumbnail generation error:', error);
+      setError('Failed to generate thumbnail. Please check your Gemini API key and try again.');
+    } finally {
+      setIsGenerating(false);
+      setTimeout(() => setProgress(0), 1000);
+    }
+  };
+
+  return (
+    <Container maxWidth="xl" sx={{ px: 4 }}>
+      <Box sx={{ py: 4 }}>
+        <Typography variant="h4" gutterBottom>
+          AI Thumbnail Creator
+        </Typography>
+        <Typography variant="body1" color="text.secondary" paragraph>
+          Create stunning thumbnails with AI-powered design using Google Gemini
+        </Typography>
+
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, md: 6 }}>
+            {/* Image Upload Section */}
+            <Card sx={{ mb: 3 }}>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                  <PhotoLibrary sx={{ mr: 1 }} />
+                  <Typography variant="h6">
+                    Upload Base Image (Optional)
+                  </Typography>
+                </Box>
+
+                {!uploadedImage ? (
+                  <Box>
+                    <Button
+                      variant="outlined"
+                      component="label"
+                      startIcon={<CloudUpload />}
+                      fullWidth
+                      size="large"
+                      sx={{ mb: 2 }}
+                    >
+                      Upload Image
+                      <input
+                        type="file"
+                        hidden
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                      />
+                    </Button>
+                    <Typography variant="body2" color="text.secondary" align="center">
+                      Upload an image to incorporate into your AI-generated thumbnail designs
+                    </Typography>
+                  </Box>
+                ) : (
+                  <Box>
+                    <Paper sx={{ p: 2, position: 'relative' }}>
+                      <IconButton
+                        size="small"
+                        onClick={removeUploadedImage}
+                        sx={{
+                          position: 'absolute',
+                          top: 8,
+                          right: 8,
+                          bgcolor: 'background.paper',
+                          boxShadow: 1,
+                        }}
+                      >
+                        <Close />
+                      </IconButton>
+                      <Box
+                        component="img"
+                        src={uploadedImage.preview}
+                        alt="Uploaded image"
+                        sx={{
+                          width: '100%',
+                          height: 200,
+                          objectFit: 'cover',
+                          borderRadius: 1,
+                          mb: 2,
+                        }}
+                      />
+                      <Typography variant="body2" color="text.secondary">
+                        {uploadedImage.file.name} ({(uploadedImage.file.size / 1024 / 1024).toFixed(2)} MB)
+                      </Typography>
+                      <Chip label="Base64 Converted" color="success" size="small" sx={{ mt: 1 }} />
+                    </Paper>
+                  </Box>
+                )}
+
+                {error && (
+                  <Alert severity="error" sx={{ mt: 2 }}>
+                    {error}
+                  </Alert>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Thumbnail Details Section */}
+            <Card>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                  <AutoAwesome sx={{ mr: 1 }} />
+                  <Typography variant="h6">
+                    Thumbnail Details
+                  </Typography>
+                </Box>
+
+                <TextField
+                  fullWidth
+                  label="Title"
+                  value={thumbnailOptions.title}
+                  onChange={(e) =>
+                    setThumbnailOptions({
+                      ...thumbnailOptions,
+                      title: e.target.value,
+                    })
+                  }
+                  sx={{ mb: 3 }}
+                  placeholder="e.g., How to Build a React App"
+                />
+
+                <TextField
+                  fullWidth
+                  label="Description"
+                  multiline
+                  rows={3}
+                  value={thumbnailOptions.description}
+                  onChange={(e) =>
+                    setThumbnailOptions({
+                      ...thumbnailOptions,
+                      description: e.target.value,
+                    })
+                  }
+                  sx={{ mb: 3 }}
+                  placeholder="Brief description of your content..."
+                />
+
+                <FormControl fullWidth sx={{ mb: 3 }}>
+                  <InputLabel>Category</InputLabel>
+                  <Select
+                    value={thumbnailOptions.category}
+                    label="Category"
+                    onChange={(e) =>
+                      setThumbnailOptions({
+                        ...thumbnailOptions,
+                        category: e.target.value,
+                      })
+                    }
+                  >
+                    {categories.map((category) => (
+                      <MenuItem key={category} value={category}>
+                        {category}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <FormControl fullWidth sx={{ mb: 3 }}>
+                  <InputLabel>Style</InputLabel>
+                  <Select
+                    value={thumbnailOptions.style}
+                    label="Style"
+                    onChange={(e) =>
+                      setThumbnailOptions({
+                        ...thumbnailOptions,
+                        style: e.target.value as 'modern' | 'classic' | 'bold' | 'minimal',
+                      })
+                    }
+                  >
+                    {styles.map((style) => (
+                      <MenuItem key={style.value} value={style.value}>
+                        {style.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+                  <TextField
+                    label="Primary Color"
+                    type="color"
+                    value={thumbnailOptions.primaryColor}
+                    onChange={(e) =>
+                      setThumbnailOptions({
+                        ...thumbnailOptions,
+                        primaryColor: e.target.value,
+                      })
+                    }
+                    sx={{ flex: 1 }}
+                  />
+                  <TextField
+                    label="Background Color"
+                    type="color"
+                    value={thumbnailOptions.backgroundColor}
+                    onChange={(e) =>
+                      setThumbnailOptions({
+                        ...thumbnailOptions,
+                        backgroundColor: e.target.value,
+                      })
+                    }
+                    sx={{ flex: 1 }}
+                  />
+                </Box>
+
+                <Button
+                  variant="contained"
+                  fullWidth
+                  size="large"
+                  onClick={handleGenerateThumbnail}
+                  disabled={!thumbnailOptions.title || !thumbnailOptions.category || isGenerating}
+                  startIcon={<AutoAwesome />}
+                  sx={{
+                    background: uploadedImage 
+                      ? 'linear-gradient(45deg, #8B5CF6 30%, #7C3AED 90%)'
+                      : undefined,
+                    '&:hover': {
+                      background: uploadedImage 
+                        ? 'linear-gradient(45deg, #7C3AED 30%, #6D28D9 90%)'
+                        : undefined,
+                    },
+                  }}
+                >
+                  {isGenerating 
+                    ? 'Generating...' 
+                    : uploadedImage
+                      ? 'Generate AI Thumbnail with Image'
+                      : 'Generate AI Thumbnail'
+                  }
+                </Button>
+                
+                {uploadedImage && (
+                  <Alert severity="info" sx={{ mt: 2 }}>
+                    <Typography variant="body2">
+                      <strong>AI Enhancement Active:</strong> Your uploaded image will be analyzed by Gemini AI 
+                      to create thumbnails that incorporate visual elements from your image.
+                    </Typography>
+                  </Alert>
+                )}
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Card>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                  <Palette sx={{ mr: 1 }} />
+                  <Typography variant="h6">
+                    Generated Thumbnails
+                  </Typography>
+                </Box>
+
+                {isGenerating && (
+                  <Box sx={{ mb: 3 }}>
+                    <Typography variant="body2" gutterBottom>
+                      {progress < 25 
+                        ? 'Initializing Gemini 2.5 Flash Image...'
+                        : progress < 50
+                        ? 'Preparing thumbnail generation...'
+                        : progress < 75
+                        ? uploadedImage 
+                          ? 'Processing uploaded image with Gemini AI...'
+                          : 'Creating AI thumbnail design...'
+                        : progress < 100
+                        ? 'Generating thumbnail with Nano Banana...'
+                        : 'Finalizing thumbnail...'
+                      }
+                    </Typography>
+                    <LinearProgress variant="determinate" value={progress} />
+                    <Typography variant="body2" sx={{ mt: 1 }}>
+                      {progress}% complete
+                    </Typography>
+                  </Box>
+                )}
+
+                {generatedThumbnails.length > 0 && (
+                  <Grid container spacing={2}>
+                    {generatedThumbnails.map((thumbnail, index) => (
+                      <Grid size={{ xs: 12 }} key={thumbnail.id}>
+                        <Paper sx={{ p: 2 }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Avatar
+                              src={thumbnail.imageUrl}
+                              variant="rounded"
+                              sx={{ width: 120, height: 80 }}
+                            />
+                            <Box sx={{ flex: 1 }}>
+                              <Typography variant="subtitle2" gutterBottom>
+                                AI Generated Thumbnail
+                              </Typography>
+                              <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
+                                <Chip size="small" label={thumbnail.style} />
+                                <Chip size="small" label={thumbnail.category} />
+                                {uploadedImage && (
+                                  <Chip size="small" label="Image-Enhanced" color="primary" />
+                                )}
+                                <Chip size="small" label="Nano Banana" color="secondary" />
+                              </Box>
+                              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+                                Generated with Gemini 2.5 Flash Image
+                              </Typography>
+                              <Box sx={{ display: 'flex', gap: 1 }}>
+                                <Button 
+                                  size="small" 
+                                  startIcon={<Download />}
+                                  onClick={() => downloadThumbnail(thumbnail.imageUrl, index)}
+                                >
+                                  Download
+                                </Button>
+                                <Button size="small" startIcon={<CloudUpload />}>
+                                  Save to Drive
+                                </Button>
+                                <Tooltip title="Generate new thumbnail">
+                                  <IconButton size="small" onClick={handleGenerateThumbnail}>
+                                    <Refresh />
+                                  </IconButton>
+                                </Tooltip>
+                              </Box>
+                            </Box>
+                          </Box>
+                        </Paper>
+                      </Grid>
+                    ))}
+                  </Grid>
+                )}
+
+                {!isGenerating && generatedThumbnails.length === 0 && (
+                  <Box
+                    sx={{
+                      textAlign: 'center',
+                      py: 4,
+                      color: 'text.secondary',
+                    }}
+                  >
+                    <AutoAwesome sx={{ fontSize: 48, mb: 2 }} />
+                    <Typography variant="body1" gutterBottom>
+                      {uploadedImage 
+                        ? 'Ready to create an AI thumbnail with your uploaded image!'
+                        : 'Fill in the details and click "Generate Thumbnail" to create an AI-powered design'
+                      }
+                    </Typography>
+                    {uploadedImage && (
+                      <Typography variant="body2" color="primary">
+                        Gemini AI will analyze your image and incorporate its elements into the thumbnail design.
+                      </Typography>
+                    )}
+                  </Box>
+                )}
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+
+        <Card sx={{ mt: 4 }}>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              AI-Powered Thumbnail Creation Tips
+            </Typography>
+            <Grid container spacing={3}>
+              <Grid size={{ xs: 12, md: 3 }}>
+                <Typography variant="subtitle2" gutterBottom>
+                  Title Best Practices
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Keep titles short and impactful. Use action words and numbers when relevant.
+                </Typography>
+              </Grid>
+              <Grid size={{ xs: 12, md: 3 }}>
+                <Typography variant="subtitle2" gutterBottom>
+                  Image Upload Benefits
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Upload a base image to let Gemini AI analyze and incorporate visual elements for more personalized thumbnails.
+                </Typography>
+              </Grid>
+              <Grid size={{ xs: 12, md: 3 }}>
+                <Typography variant="subtitle2" gutterBottom>
+                  Color Psychology
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Use contrasting colors for better visibility. Bright colors attract attention and improve click-through rates.
+                </Typography>
+              </Grid>
+              <Grid size={{ xs: 12, md: 3 }}>
+                <Typography variant="subtitle2" gutterBottom>
+                  AI Enhancement
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Gemini AI analyzes your content and creates thumbnails optimized for your specific category and style.
+                </Typography>
+              </Grid>
+            </Grid>
+            
+            <Divider sx={{ my: 3 }} />
+            
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <AutoAwesome color="primary" />
+              <Typography variant="body2" color="text.secondary">
+                <strong>Powered by Google Gemini:</strong> Advanced AI vision and text analysis for intelligent thumbnail generation
+              </Typography>
+            </Box>
+          </CardContent>
+        </Card>
+      </Box>
+    </Container>
+  );
+};
+
+export default ThumbnailCreatorPage;
