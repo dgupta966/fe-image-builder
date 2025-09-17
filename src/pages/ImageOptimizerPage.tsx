@@ -31,7 +31,6 @@ import ImagePopupModal from "../components/ImagePopupModal.tsx";
 import ImageCard from "../components/ImageCard.tsx";
 import { useAuth } from "../contexts/useAuth.ts";
 import { ImageOptimizationService } from "../services/imageOptimizationService.ts";
-import { GeminiService } from "../services/googleServices.ts";
 import { GoogleDriveService } from "../services/googleDriveService.ts";
 
 const ImageOptimizerPage: React.FC = () => {
@@ -50,7 +49,6 @@ const ImageOptimizerPage: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [imageOptimizer] = useState(() => new ImageOptimizationService());
-  const [geminiService] = useState(() => new GeminiService());
   const [driveService, setDriveService] = useState<GoogleDriveService | null>(
     null
   );
@@ -292,15 +290,6 @@ const ImageOptimizerPage: React.FC = () => {
         if (optimizationMode === "ai") {
           // AI optimization using Gemini
           try {
-            await geminiService.optimizeImage(image.originalBase64, {
-              quality: optimizationOptions.quality || 80,
-              format: optimizationOptions.format || "webp",
-              maxWidth: optimizationOptions.maxWidth,
-              maxHeight: optimizationOptions.maxHeight,
-            });
-
-            // For now, we'll use the regular optimization as Gemini doesn't directly optimize images
-            // In a real implementation, you'd send the image to Gemini for AI-based optimization suggestions
             const result = await imageOptimizer.optimizeImage(image.original, {
               quality: (optimizationOptions.quality || 80) / 100,
               format: optimizationOptions.format,
