@@ -71,7 +71,8 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              overflow: "hidden",
+              overflow: "auto",
+              padding: 2,
             }}
           >
             <PreviewImage
@@ -84,7 +85,12 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
                   e.currentTarget.src = image.secure_url;
                 }
               }}
-              style={{ backgroundColor: "transparent" }}
+              style={{
+                backgroundColor: "transparent",
+                maxWidth: "100%",
+                maxHeight: "100%",
+                objectFit: "contain"
+              }}
             />
           </Box>
         ) : (
