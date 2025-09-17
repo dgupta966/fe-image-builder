@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Typography,
-  Tabs,
-  Tab,
   Tooltip,
   Chip,
   TextField,
@@ -33,6 +31,7 @@ import {
   TextFields,
   Palette,
   Compress,
+  Star,
 } from "@mui/icons-material";
 import {
   buildTransformationUrl,
@@ -41,7 +40,6 @@ import {
 } from "../services/cloudinary/cloudinaryService";
 import {
   ContentContainer,
-  PresetsSection,
   PresetsContainer,
   MainContent,
   ControlsPanel,
@@ -65,6 +63,7 @@ const ImageEditorPage: React.FC = () => {
   const [transformedUrl, setTransformedUrl] = useState<string>("");
   const [activeTab, setActiveTab] = useState(0);
   const [activePreset, setActivePreset] = useState<string | null>(null);
+  const tabLabels = ["Presets", "Crop", "Resize", "Format", "Effects", "Filters", "Adjust", "Text", "Artistic", "Optimize", "Advanced"];
   const [image, setImage] = useState<CloudinaryResource | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -252,122 +251,164 @@ const ImageEditorPage: React.FC = () => {
       </Box>
 
       <ContentContainer theme={theme}>
-        {/* Quick Presets */}
-        <PresetsSection theme={theme}>
-          <Typography variant="h6" gutterBottom>
-            Quick Presets
-          </Typography>
-          <PresetsContainer theme={theme}>
-            {[
-              { key: "none", label: "None", icon: "❌" },
-              { key: "thumbnail", label: "Thumbnail", icon: "📏" },
-              { key: "square", label: "Square", icon: "⬜" },
-              { key: "mobile", label: "Mobile", icon: "📱" },
-              { key: "web", label: "Web", icon: "💻" },
-              { key: "blur", label: "Blur", icon: "🌫️" },
-              { key: "grayscale", label: "B&W", icon: "⚫" },
-              { key: "sepia", label: "Sepia", icon: "🟤" },
-              { key: "brightness", label: "Bright", icon: "☀️" },
-              { key: "contrast", label: "Contrast", icon: "🔆" },
-              { key: "saturation", label: "Vivid", icon: "🌈" },
-            ].map((preset) => (
-              <Chip
-                key={preset.key}
-                label={`${preset.icon} ${preset.label}`}
-                onClick={() =>
-                  preset.key === "none"
-                    ? resetTransformations()
-                    : applyPreset(preset.key)
-                }
-                variant={
-                  activePreset === preset.key ||
-                  (preset.key === "none" && !activePreset)
-                    ? "filled"
-                    : "outlined"
-                }
-                color={
-                  activePreset === preset.key ||
-                  (preset.key === "none" && !activePreset)
-                    ? "primary"
-                    : "default"
-                }
-                sx={{
-                  cursor: "pointer",
-                  minWidth: "fit-content",
-                  "&:hover": {
-                    transform: "translateY(-1px)",
-                    boxShadow: theme.shadows[2],
-                  },
-                }}
-              />
-            ))}
-          </PresetsContainer>
 
-          {/* Advanced Presets */}
-          <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
-            Advanced Presets
-          </Typography>
-          <PresetsContainer theme={theme}>
-            {[
-              { key: "vintage", label: "Vintage", icon: "📜" },
-              { key: "dramatic", label: "Dramatic", icon: "🎭" },
-              { key: "warm", label: "Warm", icon: "🌅" },
-              { key: "cool", label: "Cool", icon: "❄️" },
-              { key: "high_contrast", label: "High Contrast", icon: "⚡" },
-              { key: "soft_glow", label: "Soft Glow", icon: "✨" },
-              { key: "cartoon", label: "Cartoon", icon: "🎨" },
-              { key: "sketch", label: "Sketch", icon: "✏️" },
-              { key: "pixel_art", label: "Pixel Art", icon: "🎮" },
-              { key: "oil_painting", label: "Oil Paint", icon: "🎭" },
-              { key: "vignette_soft", label: "Soft Vignette", icon: "🌑" },
-              { key: "vignette_strong", label: "Strong Vignette", icon: "🌚" },
-              { key: "sharpen_light", label: "Light Sharpen", icon: "🔍" },
-              { key: "sharpen_strong", label: "Strong Sharpen", icon: "🔎" },
-            ].map((preset) => (
-              <Chip
-                key={preset.key}
-                label={`${preset.icon} ${preset.label}`}
-                onClick={() => applyPreset(preset.key)}
-                variant={activePreset === preset.key ? "filled" : "outlined"}
-                color={activePreset === preset.key ? "primary" : "default"}
-                sx={{
-                  cursor: "pointer",
-                  minWidth: "fit-content",
-                  "&:hover": {
-                    transform: "translateY(-1px)",
-                    boxShadow: theme.shadows[2],
-                  },
-                }}
-              />
-            ))}
-          </PresetsContainer>
-        </PresetsSection>
 
         <MainContent>
-          {/* Transformation Controls */}
-          <ControlsPanel theme={theme}>
+          {/* Left: Transformation Controls (fixed) with vertical icon rail */}
+          <ControlsPanel
+            theme={theme}
+            sx={{
+              flex: '0 0 320px',
+              maxWidth: 320,
+              minWidth: 240,
+              height: 'calc(100vh - 240px)',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              p: 0,
+              bgcolor: theme.palette.background.paper,
+            }}
+          >
+            <Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'divider' }}><Typography variant="h6">Edit Tools</Typography></Box>
+            <Box sx={{ display: 'flex', height: '100%' }}>
+              {/* Narrow icon rail */}
+              <Box sx={{ width: 72, bgcolor: theme.palette.background.default, display: 'flex', flexDirection: 'column', alignItems: 'center', py: 2, gap: 1, borderRight: '1px solid', borderColor: 'divider' }}>
+                <Tooltip title="Presets">
+                  <StyledIconButton onClick={() => setActiveTab(0)} theme={theme} sx={{ bgcolor: activeTab === 0 ? theme.palette.primary.main : 'transparent', color: activeTab === 0 ? 'white' : 'inherit' }}>
+                    <Star />
+                  </StyledIconButton>
+                </Tooltip>
+                <Tooltip title="Crop">
+                  <StyledIconButton onClick={() => setActiveTab(1)} theme={theme} sx={{ bgcolor: activeTab === 1 ? theme.palette.primary.main : 'transparent', color: activeTab === 1 ? 'white' : 'inherit' }}>
+                    <Crop />
+                  </StyledIconButton>
+                </Tooltip>
+                <Tooltip title="Resize">
+                  <StyledIconButton onClick={() => setActiveTab(2)} theme={theme} sx={{ bgcolor: activeTab === 2 ? theme.palette.primary.main : 'transparent', color: activeTab === 2 ? 'white' : 'inherit' }}>
+                    <PhotoSizeSelectLarge />
+                  </StyledIconButton>
+                </Tooltip>
+                <Tooltip title="Format">
+                  <StyledIconButton onClick={() => setActiveTab(3)} theme={theme} sx={{ bgcolor: activeTab === 3 ? theme.palette.primary.main : 'transparent', color: activeTab === 3 ? 'white' : 'inherit' }}>
+                    <FormatColorFill />
+                  </StyledIconButton>
+                </Tooltip>
+                <Tooltip title="Effects">
+                  <StyledIconButton onClick={() => setActiveTab(4)} theme={theme} sx={{ bgcolor: activeTab === 4 ? theme.palette.primary.main : 'transparent', color: activeTab === 4 ? 'white' : 'inherit' }}>
+                    <BlurOn />
+                  </StyledIconButton>
+                </Tooltip>
+                <Tooltip title="Filters">
+                  <StyledIconButton onClick={() => setActiveTab(5)} theme={theme} sx={{ bgcolor: activeTab === 5 ? theme.palette.primary.main : 'transparent', color: activeTab === 5 ? 'white' : 'inherit' }}>
+                    <Filter />
+                  </StyledIconButton>
+                </Tooltip>
+                <Tooltip title="Adjust">
+                  <StyledIconButton onClick={() => setActiveTab(6)} theme={theme} sx={{ bgcolor: activeTab === 6 ? theme.palette.primary.main : 'transparent', color: activeTab === 6 ? 'white' : 'inherit' }}>
+                    <Tune />
+                  </StyledIconButton>
+                </Tooltip>
+                <Tooltip title="Text">
+                  <StyledIconButton onClick={() => setActiveTab(7)} theme={theme} sx={{ bgcolor: activeTab === 7 ? theme.palette.primary.main : 'transparent', color: activeTab === 7 ? 'white' : 'inherit' }}>
+                    <TextFields />
+                  </StyledIconButton>
+                </Tooltip>
+                <Tooltip title="Artistic">
+                  <StyledIconButton onClick={() => setActiveTab(8)} theme={theme} sx={{ bgcolor: activeTab === 8 ? theme.palette.primary.main : 'transparent', color: activeTab === 8 ? 'white' : 'inherit' }}>
+                    <Palette />
+                  </StyledIconButton>
+                </Tooltip>
+                <Tooltip title="Optimize">
+                  <StyledIconButton onClick={() => setActiveTab(9)} theme={theme} sx={{ bgcolor: activeTab === 9 ? theme.palette.primary.main : 'transparent', color: activeTab === 9 ? 'white' : 'inherit' }}>
+                    <Compress />
+                  </StyledIconButton>
+                </Tooltip>
+                <Tooltip title="Advanced">
+                  <StyledIconButton onClick={() => setActiveTab(10)} theme={theme} sx={{ bgcolor: activeTab === 10 ? theme.palette.primary.main : 'transparent', color: activeTab === 10 ? 'white' : 'inherit' }}>
+                    <Settings />
+                  </StyledIconButton>
+                </Tooltip>
+                <Box sx={{ flex: 1 }} />
+                <Tooltip title="Reset">
+                  <StyledIconButton onClick={resetTransformations} theme={theme}>
+                    <Refresh />
+                  </StyledIconButton>
+                </Tooltip>
+              </Box>
+
+              {/* Tools area (scrollable) */}
+              <Box sx={{ flex: 1, overflow: 'auto', p: 2 }}>{/* keep existing controls inside */}
             <TabsContainer theme={theme}>
-              <Tabs
-                value={activeTab}
-                onChange={(_, newValue) => setActiveTab(newValue)}
-                variant="scrollable"
-                scrollButtons="auto"
-              >
-                <Tab icon={<Crop />} label="Crop" />
-                <Tab icon={<PhotoSizeSelectLarge />} label="Resize" />
-                <Tab icon={<FormatColorFill />} label="Format" />
-                <Tab icon={<BlurOn />} label="Effects" />
-                <Tab icon={<Filter />} label="Filters" />
-                <Tab icon={<Tune />} label="Adjust" />
-                <Tab icon={<TextFields />} label="Text" />
-                <Tab icon={<Palette />} label="Artistic" />
-                <Tab icon={<Compress />} label="Optimize" />
-                <Tab icon={<Settings />} label="Advanced" />
-              </Tabs>
+              <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>{tabLabels[activeTab]}</Typography>
             </TabsContainer>
 
             <TabContent theme={theme}>
               {activeTab === 0 && (
+                <div>
+                  <Typography variant="h6" gutterBottom>Presets</Typography>
+                  <PresetsContainer theme={theme}>
+                    {[
+                      { key: "none", label: "None", icon: "❌" },
+                      { key: "thumbnail", label: "Thumbnail", icon: "📏" },
+                      { key: "square", label: "Square", icon: "⬜" },
+                      { key: "mobile", label: "Mobile", icon: "📱" },
+                      { key: "web", label: "Web", icon: "💻" },
+                      { key: "blur", label: "Blur", icon: "🌫️" },
+                      { key: "grayscale", label: "B&W", icon: "⚫" },
+                      { key: "sepia", label: "Sepia", icon: "🟤" },
+                      { key: "brightness", label: "Bright", icon: "☀️" },
+                      { key: "contrast", label: "Contrast", icon: "🔆" },
+                      { key: "saturation", label: "Vivid", icon: "🌈" },
+                      { key: "vintage", label: "Vintage", icon: "📜" },
+                      { key: "dramatic", label: "Dramatic", icon: "🎭" },
+                      { key: "warm", label: "Warm", icon: "🌅" },
+                      { key: "cool", label: "Cool", icon: "❄️" },
+                      { key: "high_contrast", label: "High Contrast", icon: "⚡" },
+                      { key: "soft_glow", label: "Soft Glow", icon: "✨" },
+                      { key: "cartoon", label: "Cartoon", icon: "🎨" },
+                      { key: "sketch", label: "Sketch", icon: "✏️" },
+                      { key: "pixel_art", label: "Pixel Art", icon: "🎮" },
+                      { key: "oil_painting", label: "Oil Paint", icon: "🎭" },
+                      { key: "vignette_soft", label: "Soft Vignette", icon: "🌑" },
+                      { key: "vignette_strong", label: "Strong Vignette", icon: "🌚" },
+                      { key: "sharpen_light", label: "Light Sharpen", icon: "🔍" },
+                      { key: "sharpen_strong", label: "Strong Sharpen", icon: "🔎" },
+                    ].map((preset) => (
+                      <Chip
+                        key={preset.key}
+                        label={`${preset.icon} ${preset.label}`}
+                        onClick={
+                          preset.key === "none"
+                            ? resetTransformations
+                            : () => applyPreset(preset.key)
+                        }
+                        variant={
+                          activePreset === preset.key ||
+                          (preset.key === "none" && !activePreset)
+                            ? "filled"
+                            : "outlined"
+                        }
+                        color={
+                          activePreset === preset.key ||
+                          (preset.key === "none" && !activePreset)
+                            ? "primary"
+                            : "default"
+                        }
+                        sx={{
+                          cursor: "pointer",
+                          minWidth: "fit-content",
+                          "&:hover": {
+                            transform: "translateY(-1px)",
+                            boxShadow: theme.shadows[2],
+                          },
+                        }}
+                      />
+                    ))}
+                  </PresetsContainer>
+                </div>
+              )}
+
+              {activeTab === 1 && (
                 <div>
                   <FormControl fullWidth sx={{ mb: 2 }}>
                     <InputLabel>Crop Mode</InputLabel>
@@ -406,7 +447,7 @@ const ImageEditorPage: React.FC = () => {
                 </div>
               )}
 
-              {activeTab === 1 && (
+              {activeTab === 2 && (
                 <div>
                   <TextField
                     fullWidth
@@ -437,7 +478,7 @@ const ImageEditorPage: React.FC = () => {
                 </div>
               )}
 
-              {activeTab === 2 && (
+              {activeTab === 3 && (
                 <div>
                   <FormControl fullWidth sx={{ mb: 2 }}>
                     <InputLabel>Format</InputLabel>
@@ -457,7 +498,7 @@ const ImageEditorPage: React.FC = () => {
                 </div>
               )}
 
-              {activeTab === 3 && (
+              {activeTab === 4 && (
                 <div>
                   <FormControl fullWidth sx={{ mb: 2 }}>
                     <InputLabel>Effect</InputLabel>
@@ -480,7 +521,7 @@ const ImageEditorPage: React.FC = () => {
                 </div>
               )}
 
-              {activeTab === 4 && (
+              {activeTab === 5 && (
                 <div>
                   <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
                     Filters
@@ -535,7 +576,7 @@ const ImageEditorPage: React.FC = () => {
                 </div>
               )}
 
-              {activeTab === 5 && (
+              {activeTab === 6 && (
                 <div>
                   <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
                     Color Adjustments
@@ -608,7 +649,7 @@ const ImageEditorPage: React.FC = () => {
                 </div>
               )}
 
-              {activeTab === 6 && (
+              {activeTab === 7 && (
                 <div>
                   <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
                     Text Overlay
@@ -696,7 +737,7 @@ const ImageEditorPage: React.FC = () => {
                 </div>
               )}
 
-              {activeTab === 7 && (
+              {activeTab === 8 && (
                 <div>
                   <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
                     Artistic Effects
@@ -779,7 +820,7 @@ const ImageEditorPage: React.FC = () => {
                 </div>
               )}
 
-              {activeTab === 8 && (
+              {activeTab === 9 && (
                 <div>
                   <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
                     Optimization
@@ -841,7 +882,7 @@ const ImageEditorPage: React.FC = () => {
                 </div>
               )}
 
-              {activeTab === 9 && (
+              {activeTab === 10 && (
                 <div>
                   <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
                     Advanced Settings
@@ -916,36 +957,49 @@ const ImageEditorPage: React.FC = () => {
                 </div>
               )}
             </TabContent>
+              </Box>
+            </Box>
           </ControlsPanel>
 
-          {/* Preview */}
-          <PreviewPanel theme={theme}>
-            <PreviewHeader theme={theme}>
-              <Typography variant="h6">Preview</Typography>
-              <Tooltip title="Reset all transformations">
-                <StyledIconButton
-                  onClick={resetTransformations}
-                  color="secondary"
-                  theme={theme}
-                >
-                  <Refresh />
-                </StyledIconButton>
-              </Tooltip>
+          {/* Center: Canvas / Preview (flexible) */}
+          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2, height: 'calc(100vh - 240px)', overflow: 'hidden' }}>
+            <PreviewPanel theme={theme} sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, position: 'relative', bgcolor: theme.palette.mode === 'dark' ? '#000' : '#000' }}>
+            {/* overlay action buttons top-right */}
+            <Box sx={{ position: 'absolute', top: 12, right: 12, zIndex: 30, display: 'flex', gap: 1 }}>
+              <StyledIconButton theme={theme} onClick={handleSave} color="primary">
+                <Save />
+              </StyledIconButton>
+              <StyledIconButton theme={theme} onClick={resetTransformations}>
+                <Refresh />
+              </StyledIconButton>
+              <StyledIconButton theme={theme}>
+                <Settings />
+              </StyledIconButton>
+            </Box>
+
+            <PreviewHeader theme={theme} sx={{ px: 2 }}>
+              <Typography variant="h6" sx={{ color: '#fff' }}>Preview</Typography>
             </PreviewHeader>
 
-            <PreviewContainer theme={theme}>
+            <PreviewContainer theme={theme} sx={{ bgcolor: '#000', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               {transformedUrl ? (
-                <PreviewImage
-                  src={transformedUrl}
-                  alt="Transformed preview"
-                  theme={theme}
-                  onError={(e) => {
-                    console.error("Image failed to load:", transformedUrl);
-                    if (image) {
-                      e.currentTarget.src = image.secure_url;
-                    }
-                  }}
-                />
+                <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', bgcolor: '#000' }}>
+                  {/* letterbox wrapper */}
+                  <Box sx={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <PreviewImage
+                      src={transformedUrl}
+                      alt="Transformed preview"
+                      theme={theme}
+                      onError={(e) => {
+                        console.error('Image failed to load:', transformedUrl);
+                        if (image) {
+                          e.currentTarget.src = image.secure_url;
+                        }
+                      }}
+                      style={{ backgroundColor: '#000' }}
+                    />
+                  </Box>
+                </Box>
               ) : (
                 <LoadingPlaceholder theme={theme}>
                   <Typography>Select transformations to see preview</Typography>
@@ -971,7 +1025,23 @@ const ImageEditorPage: React.FC = () => {
                 </Typography>
               </TransformationsInfo>
             )}
-          </PreviewPanel>
+            </PreviewPanel>
+          </Box>
+
+          {/* Right: Thumbnails / Additional tools (fixed filmstrip) */}
+          <Box sx={{ flex: '0 0 260px', maxWidth: 260, minWidth: 200, height: 'calc(100vh - 240px)', overflow: 'hidden', bgcolor: theme.palette.mode === 'dark' ? '#0b1115' : '#fafafa', borderLeft: '1px solid', borderColor: 'divider', display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ p: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>Thumbnails</Typography>
+              <Button size="small">Add</Button>
+            </Box>
+            <Box sx={{ overflow: 'auto', p: 2, display: 'grid', gridTemplateColumns: '1fr', gap: 12 }}>
+              {[1, 2, 3, 4, 5].map((i) => (
+                <Box key={i} sx={{ width: '100%', height: 120, borderRadius: 1, overflow: 'hidden', bgcolor: theme.palette.mode === 'dark' ? '#071018' : '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <img src={image.secure_url} alt={`thumb-${i}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </Box>
+              ))}
+            </Box>
+          </Box>
         </MainContent>
       </ContentContainer>
     </Box>
