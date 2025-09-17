@@ -85,13 +85,10 @@ export const uploadImage = async (file: File): Promise<UploadResult> => {
     });
 
     // ✅ Send upload request
-    const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    const response = await fetch(`/api/cloudinary/image/upload`, {
+      method: "POST",
+      body: formData,
+    });
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -148,13 +145,10 @@ export const deleteImage = async (publicId: string): Promise<DeleteResult> => {
       signature: signature.substring(0, 10) + "...", // Don't log full signature
     });
 
-    const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`,
-      {
-        method: "POST",
-        body: formData, // Use FormData instead of JSON
-      }
-    );
+    const response = await fetch(`/api/cloudinary/image/destroy`, {
+      method: "POST",
+      body: formData, // Use FormData instead of JSON
+    });
 
     console.log("Delete response status:", response.status);
 
@@ -196,21 +190,18 @@ export const editImage = async (
 ): Promise<EditResult> => {
   try {
     if (newName) {
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/rename`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            from_public_id: publicId,
-            to_public_id: newName,
-            api_key: apiKey,
-            api_secret: apiSecret,
-          }),
-        }
-      );
+      const response = await fetch(`/api/cloudinary/image/rename`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from_public_id: publicId,
+          to_public_id: newName,
+          api_key: apiKey,
+          api_secret: apiSecret,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error(`Edit failed: ${response.statusText}`);
@@ -260,20 +251,19 @@ export const getImages = async (): Promise<CloudinaryResource[]> => {
       throw new Error("Cloudinary API secret not configured");
     }
 
-    const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${cloudName}/resources/image`,
-      {
-        method: "GET",
-        headers: {
-          "Authorization": `Basic ${btoa(`${apiKey}:${apiSecret}`)}`,
-        },
-      }
-    );
+    const response = await fetch(`/api/cloudinary/resources/image`, {
+      method: "GET",
+      headers: {
+        Authorization: `Basic ${btoa(`${apiKey}:${apiSecret}`)}`,
+      },
+    });
 
     if (!response.ok) {
       const errorText = await response.text();
       console.error("API Response:", response.status, errorText);
-      throw new Error(`Failed to fetch images: ${response.status} - ${errorText}`);
+      throw new Error(
+        `Failed to fetch images: ${response.status} - ${errorText}`
+      );
     }
 
     const data = await response.json();
@@ -361,7 +351,8 @@ export const buildTransformationUrl = (
   if (options.effect) transformations.push(`e_${options.effect}`);
   if (options.radius !== undefined) transformations.push(`r_${options.radius}`);
   if (options.angle) transformations.push(`a_${options.angle}`);
-  if (options.opacity !== undefined) transformations.push(`o_${options.opacity}`);
+  if (options.opacity !== undefined)
+    transformations.push(`o_${options.opacity}`);
   if (options.background) transformations.push(`b_${options.background}`);
   if (options.color) transformations.push(`co_${options.color}`);
   if (options.dpr) transformations.push(`dpr_${options.dpr}`);
