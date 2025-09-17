@@ -1,5 +1,12 @@
 import React from "react";
-import { Box, Card, CardContent, CardActions, Skeleton, Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  CardActions,
+  Skeleton,
+  Typography,
+} from "@mui/material";
 import { Image } from "@mui/icons-material";
 import CloudinaryImageCard from "./CloudinaryImageCard";
 import { type CloudinaryResource } from "../../services/cloudinary/cloudinaryService";
@@ -25,46 +32,43 @@ const ImageGrid: React.FC<ImageGridProps> = ({
 }) => {
   if (isLoadingImages) {
     return (
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
-        {[...Array(8)].map((_, index) => (
-          <Box
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "repeat(1, 1fr)",
+            sm: "repeat(2, 1fr)",
+            md: "repeat(4, 1fr)",
+          },
+          gap: 3,
+          width: "100%",
+        }}
+      >
+        {[...Array(9)].map((_, index) => (
+          <Card
             key={`skeleton-${index}`}
             sx={{
-              width: { xs: "100%", sm: "48%", md: "31%", lg: "23%" },
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
             }}
           >
-            <Card
-              sx={{
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
-              <Skeleton variant="rectangular" height={200} />
-              <CardContent sx={{ flexGrow: 1 }}>
-                <Skeleton variant="text" width="80%" />
-                <Box sx={{ mt: 1, display: "flex", gap: 1 }}>
-                  <Skeleton
-                    variant="rectangular"
-                    width={60}
-                    height={24}
-                  />
-                  <Skeleton
-                    variant="rectangular"
-                    width={80}
-                    height={24}
-                  />
-                </Box>
-                <Skeleton variant="text" width="60%" sx={{ mt: 1 }} />
-              </CardContent>
-              <CardActions>
-                <Skeleton variant="circular" width={40} height={40} />
-                <Skeleton variant="circular" width={40} height={40} />
-                <Skeleton variant="circular" width={40} height={40} />
-                <Skeleton variant="circular" width={40} height={40} />
-              </CardActions>
-            </Card>
-          </Box>
+            <Skeleton variant="rectangular" height={200} />
+            <CardContent sx={{ flexGrow: 1 }}>
+              <Skeleton variant="text" width="80%" />
+              <Box sx={{ mt: 1, display: "flex", gap: 1 }}>
+                <Skeleton variant="rectangular" width={60} height={24} />
+                <Skeleton variant="rectangular" width={80} height={24} />
+              </Box>
+              <Skeleton variant="text" width="60%" sx={{ mt: 1 }} />
+            </CardContent>
+            <CardActions>
+              <Skeleton variant="circular" width={40} height={40} />
+              <Skeleton variant="circular" width={40} height={40} />
+              <Skeleton variant="circular" width={40} height={40} />
+              <Skeleton variant="circular" width={40} height={40} />
+            </CardActions>
+          </Card>
         ))}
       </Box>
     );
@@ -94,7 +98,18 @@ const ImageGrid: React.FC<ImageGridProps> = ({
   }
 
   return (
-    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateColumns: {
+          xs: "repeat(1, 1fr)",
+          sm: "repeat(2, 1fr)",
+          md: "repeat(4, 1fr)",
+        },
+        gap: 3,
+        width: "100%",
+      }}
+    >
       {images.map((image) => (
         <CloudinaryImageCard
           key={image.public_id}

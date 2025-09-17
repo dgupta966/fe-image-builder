@@ -15,7 +15,10 @@ import {
   Transform,
   ContentCopy,
 } from "@mui/icons-material";
-import { getOptimizedUrl, type CloudinaryResource } from "../../services/cloudinary/cloudinaryService";
+import {
+  getOptimizedUrl,
+  type CloudinaryResource,
+} from "../../services/cloudinary/cloudinaryService";
 
 interface CloudinaryImageCardProps {
   image: CloudinaryResource;
@@ -43,11 +46,7 @@ const CloudinaryImageCard: React.FC<CloudinaryImageCardProps> = ({
   };
 
   return (
-    <Box
-      sx={{
-        width: { xs: "100%", sm: "48%", md: "31%", lg: "23%" },
-      }}
-    >
+    <Box>
       <Card
         sx={{
           height: "100%",
@@ -71,11 +70,7 @@ const CloudinaryImageCard: React.FC<CloudinaryImageCardProps> = ({
           }}
         />
         <CardContent sx={{ flexGrow: 1 }}>
-          <Typography
-            variant="body2"
-            noWrap
-            title={image.public_id}
-          >
+          <Typography variant="body2" noWrap title={image.public_id}>
             {image.public_id.split("/").pop()}
           </Typography>
           <Box sx={{ mt: 1 }}>
@@ -84,10 +79,7 @@ const CloudinaryImageCard: React.FC<CloudinaryImageCardProps> = ({
               size="small"
               sx={{ mr: 1 }}
             />
-            <Chip
-              label={formatFileSize(image.bytes)}
-              size="small"
-            />
+            <Chip label={formatFileSize(image.bytes)} size="small" />
           </Box>
           <Typography variant="caption" color="text.secondary">
             {new Date(image.created_at).toLocaleDateString()}
@@ -101,11 +93,7 @@ const CloudinaryImageCard: React.FC<CloudinaryImageCardProps> = ({
           >
             <Transform />
           </IconButton>
-          <IconButton
-            size="small"
-            onClick={() => onEdit(image)}
-            title="Edit"
-          >
+          <IconButton size="small" onClick={() => onEdit(image)} title="Edit">
             <Edit />
           </IconButton>
           <IconButton
