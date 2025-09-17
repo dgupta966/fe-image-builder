@@ -13,6 +13,7 @@ import ImageOptimizerPage from './pages/ImageOptimizerPage.tsx';
 import GoogleDrivePage from './pages/GoogleDrivePage.tsx';
 import ThumbnailCreatorPage from './pages/ThumbnailCreatorPage.tsx';
 import ProfilePage from './pages/ProfilePage.tsx';
+import CloudinaryPage from './pages/CloudinaryPage.tsx';
 import { useAuth } from './contexts/useAuth';
 
 function AppContent() {
@@ -44,6 +45,7 @@ function AppContent() {
           <Route path="/optimizer" element={<ImageOptimizerPage />} />
           <Route path="/google-drive" element={<GoogleDrivePage />} />
           <Route path="/thumbnail-creator" element={<ThumbnailCreatorPage />} />
+          <Route path="/cloudinary" element={<CloudinaryPage />} />
         </Routes>
       </Box>
     );
@@ -78,6 +80,7 @@ function AppContent() {
             <Route path="/optimizer" element={<ImageOptimizerPage />} />
             <Route path="/google-drive" element={<GoogleDrivePage />} />
             <Route path="/thumbnail-creator" element={<ThumbnailCreatorPage />} />
+            <Route path="/cloudinary" element={<CloudinaryPage />} />
           </Routes>
         </Box>
       </Box>
