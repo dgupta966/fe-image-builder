@@ -23,11 +23,14 @@ const Header: React.FC<HeaderProps> = ({
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        mb: 3,
+        mb: 2,
         p: 2,
         bgcolor: "background.paper",
         borderRadius: 2,
         boxShadow: 1,
+        position: 'sticky',
+        top: 0,
+        zIndex: 1000,
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>

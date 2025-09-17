@@ -59,9 +59,7 @@ export const HeaderTitle = styled(Box)<{ theme: Theme }>`
 `;
 
 export const ContentContainer = styled(Box)<{ theme: Theme }>`
-  padding: 24px;
-  height: calc(100% - 140px);
-  overflow: hidden;
+   overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -266,35 +264,11 @@ export const PreviewHeader = styled(Box)<{ theme: Theme }>`
   }
 `;
 
-export const PreviewContainer = styled(Box)<{ theme: Theme }>`
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 2px dashed ${({ theme }) => theme.palette.divider};
-  border-radius: 16px;
-  background: ${({ theme }) =>
-    theme.palette.mode === 'dark'
-      ? theme.palette.grey[900]
-      : theme.palette.grey[50]
-  };
-  transition: all 0.3s ease-in-out;
-  &:hover {
-    border-color: ${({ theme }) => theme.palette.primary.main};
-    background: ${({ theme }) =>
-      theme.palette.mode === 'dark'
-        ? theme.palette.primary.main + '10'
-        : theme.palette.primary.main + '08'
-    };
-  }
-`;
-
+ 
 export const PreviewImage = styled('img')<{ theme: Theme }>`
   max-width: 100%;
   max-height: 100%;
-  object-fit: contain;
-  border-radius: 8px;
-  box-shadow: ${({ theme }) =>
+   box-shadow: ${({ theme }) =>
     theme.palette.mode === 'dark'
       ? '0 4px 12px rgba(0, 0, 0, 0.4)'
       : '0 4px 12px rgba(0, 0, 0, 0.15)'

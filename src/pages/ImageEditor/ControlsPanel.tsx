@@ -64,8 +64,8 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
       sx={{
         flex: "0 0 320px",
         maxWidth: 400,
-        minWidth: 300,
-        height: "calc(100vh - 240px)",
+        minWidth: 350,
+        // height: "calc(100vh - 240px)",
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
@@ -98,7 +98,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
           }}
         >
           {icons.map((Icon, index) => (
-            <Tooltip key={index} title={tabLabels[index]}>
+            <Tooltip key={index} placement="left" title={tabLabels[index]}>
               <StyledIconButton
                 onClick={() => onTabChange(index)}
                 theme={theme}

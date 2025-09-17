@@ -173,7 +173,7 @@ const ImageEditorPage: React.FC = () => {
 
   return (
     <Box
-      sx={{ minHeight: "100vh", width: "100%", bgcolor: "background.default" }}
+      sx={{ width: "100%", bgcolor: "background.default" ,}}
     >
       <Header
         imageName={image.public_id.split("/").pop() || ""}

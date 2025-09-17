@@ -1,7 +1,6 @@
 import React from "react";
-import { Chip } from "@mui/material";
+import { Chip, Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { PresetsContainer } from "../../components/cloudinary/ImageTransformModal.styled";
 
 interface PresetsTabProps {
   activePreset: string | null;
@@ -46,15 +45,33 @@ const PresetsTab: React.FC<PresetsTabProps> = ({
 
   return (
     <div>
-      <PresetsContainer theme={theme}>
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "repeat(2, 1fr)",
+          gap: 1.5,
+          //   maxHeight: '500px',
+          overflow: "auto",
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
+      >
         {presets.map((preset) => (
           <Chip
             key={preset.key}
-            label={`${preset.icon} ${preset.label}`}
+            label={
+              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                <span>{preset.icon}</span>
+                <Typography variant="caption" sx={{ fontSize: "0.7rem" }}>
+                  {preset.label}
+                </Typography>
+              </Box>
+            }
             onClick={
-              preset.key === "none"
-                ? onReset
-                : () => onApplyPreset(preset.key)
+              preset.key === "none" ? onReset : () => onApplyPreset(preset.key)
             }
             variant={
               activePreset === preset.key ||
@@ -70,15 +87,19 @@ const PresetsTab: React.FC<PresetsTabProps> = ({
             }
             sx={{
               cursor: "pointer",
-              minWidth: "fit-content",
+              height: "auto",
+              py: 1,
+              "& .MuiChip-label": {
+                display: "block",
+                whiteSpace: "normal",
+              },
               "&:hover": {
-                transform: "translateY(-1px)",
                 boxShadow: theme.shadows[2],
               },
             }}
           />
         ))}
-      </PresetsContainer>
+      </Box>
     </div>
   );
 };

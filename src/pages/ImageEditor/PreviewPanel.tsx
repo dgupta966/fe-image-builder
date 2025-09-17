@@ -3,15 +3,14 @@ import { Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import {
   PreviewPanel as StyledPreviewPanel,
-  PreviewHeader,
-  PreviewContainer,
   PreviewImage,
-  TransformationsInfo,
+  //   TransformationsInfo,
   LoadingPlaceholder,
-  StyledIconButton,
 } from "../../components/cloudinary/ImageTransformModal.styled";
-import { Save, Refresh, Settings } from "@mui/icons-material";
-import type { CloudinaryResource, TransformationOptions } from "../../services/cloudinary/cloudinaryService";
+import type {
+  CloudinaryResource,
+  TransformationOptions,
+} from "../../services/cloudinary/cloudinaryService";
 
 interface PreviewPanelProps {
   image: CloudinaryResource;
@@ -26,11 +25,11 @@ interface PreviewPanelProps {
 const PreviewPanel: React.FC<PreviewPanelProps> = ({
   image,
   transformedUrl,
-  options,
-  activePreset,
-  hasTransformations,
-  onSave,
-  onReset,
+  //   options,
+  //   activePreset,
+  //   hasTransformations,
+  //   onSave,
+  //   onReset,
 }) => {
   const theme = useTheme();
 
@@ -43,46 +42,10 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
         flexDirection: "column",
         minWidth: 0,
         position: "relative",
-        bgcolor: theme.palette.mode === "dark" ? "#000" : "#000",
+        bgcolor: "transparent",
       }}
     >
-      {/* overlay action buttons top-right */}
-      <Box
-        sx={{
-          position: "absolute",
-          top: 12,
-          right: 12,
-          zIndex: 30,
-          display: "flex",
-          gap: 1,
-        }}
-      >
-        <StyledIconButton theme={theme} onClick={onSave} color="primary">
-          <Save />
-        </StyledIconButton>
-        <StyledIconButton theme={theme} onClick={onReset}>
-          <Refresh />
-        </StyledIconButton>
-        <StyledIconButton theme={theme}>
-          <Settings />
-        </StyledIconButton>
-      </Box>
-
-      <PreviewHeader theme={theme} sx={{ px: 2 }}>
-        <Typography variant="h6" sx={{ color: "#fff" }}>
-          Preview
-        </Typography>
-      </PreviewHeader>
-
-      <PreviewContainer
-        theme={theme}
-        sx={{
-          bgcolor: "#000",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
+      <Box>
         {transformedUrl ? (
           <Box
             sx={{
@@ -91,10 +54,9 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              bgcolor: "#000",
+              bgcolor: "transparent",
             }}
           >
-            {/* letterbox wrapper */}
             <Box
               sx={{
                 maxWidth: "100%",
@@ -116,7 +78,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
                     e.currentTarget.src = image.secure_url;
                   }
                 }}
-                style={{ backgroundColor: "#000" }}
+                style={{ backgroundColor: "transparent" }}
               />
             </Box>
           </Box>
@@ -125,9 +87,9 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
             <Typography>Select transformations to see preview</Typography>
           </LoadingPlaceholder>
         )}
-      </PreviewContainer>
+      </Box>
 
-      {hasTransformations && (
+      {/* {hasTransformations && (
         <TransformationsInfo theme={theme}>
           <Typography variant="body2">
             <strong>Active Preset:</strong>{" "}
@@ -143,7 +105,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
               .join(", ")}
           </Typography>
         </TransformationsInfo>
-      )}
+      )} */}
     </StyledPreviewPanel>
   );
 };
