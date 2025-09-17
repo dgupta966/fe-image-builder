@@ -252,7 +252,7 @@ export const TabContent = styled(Box)<{ theme: Theme }>`
 
 export const PreviewPanel = styled(Paper)<{ theme: Theme }>`
   flex: 1;
-  padding: 24px;
+  padding: 12px;
   border-radius: 0px;
   background: #000;
   box-shadow: ${({ theme }) =>
