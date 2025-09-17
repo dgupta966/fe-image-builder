@@ -71,6 +71,12 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         flexDirection: "column",
         p: 0,
         bgcolor: theme.palette.background.paper,
+        "@media (max-width: 1200px)": {
+          flex: "none",
+          width: "100%",
+          maxWidth: "none",
+          minWidth: "auto",
+        },
       }}
     >
       <Box
@@ -95,6 +101,8 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
             gap: 1,
             borderRight: "1px solid",
             borderColor: "divider",
+            overflow: "auto",
+            height: "100%",
           }}
         >
           {icons.map((Icon, index) => (

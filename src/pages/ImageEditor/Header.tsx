@@ -11,7 +11,6 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({
-  imageName,
   hasTransformations,
   onBack,
   onReset,
@@ -23,12 +22,12 @@ const Header: React.FC<HeaderProps> = ({
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        mb: 2,
         p: 2,
+        mb: 1,
         bgcolor: "background.paper",
         borderRadius: 2,
         boxShadow: 1,
-        position: 'sticky',
+        position: "sticky",
         top: 0,
         zIndex: 1000,
       }}
@@ -40,17 +39,10 @@ const Header: React.FC<HeaderProps> = ({
         <Typography variant="h5" component="h1">
           Image Editor
         </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {imageName}
-        </Typography>
       </Box>
 
       <Box sx={{ display: "flex", gap: 1 }}>
-        <Button
-          startIcon={<Refresh />}
-          onClick={onReset}
-          variant="outlined"
-        >
+        <Button startIcon={<Refresh />} onClick={onReset} variant="outlined">
           Reset
         </Button>
         <Button

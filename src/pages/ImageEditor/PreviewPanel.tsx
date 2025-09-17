@@ -43,44 +43,43 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
         minWidth: 0,
         position: "relative",
         bgcolor: "transparent",
+        height: "calc(100vh - 87px)",
       }}
     >
-      <Box>
+      <Box
+        sx={{
+          flex: 1,
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          bgcolor: "transparent",
+        }}
+      >
         {transformedUrl ? (
           <Box
             sx={{
-              width: "100%",
-              height: "100%",
+              maxWidth: "100%",
+              maxHeight: "100%",
+              width: "auto",
+              height: "auto",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              bgcolor: "transparent",
             }}
           >
-            <Box
-              sx={{
-                maxWidth: "100%",
-                maxHeight: "100%",
-                width: "auto",
-                height: "auto",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
+            <PreviewImage
+              src={transformedUrl}
+              alt="Transformed preview"
+              theme={theme}
+              onError={(e) => {
+                console.error("Image failed to load:", transformedUrl);
+                if (image) {
+                  e.currentTarget.src = image.secure_url;
+                }
               }}
-            >
-              <PreviewImage
-                src={transformedUrl}
-                alt="Transformed preview"
-                theme={theme}
-                onError={(e) => {
-                  console.error("Image failed to load:", transformedUrl);
-                  if (image) {
-                    e.currentTarget.src = image.secure_url;
-                  }
-                }}
-                style={{ backgroundColor: "transparent" }}
-              />
-            </Box>
+              style={{ backgroundColor: "transparent" }}
+            />
           </Box>
         ) : (
           <LoadingPlaceholder theme={theme}>
@@ -88,24 +87,6 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
           </LoadingPlaceholder>
         )}
       </Box>
-
-      {/* {hasTransformations && (
-        <TransformationsInfo theme={theme}>
-          <Typography variant="body2">
-            <strong>Active Preset:</strong>{" "}
-            {activePreset
-              ? activePreset.charAt(0).toUpperCase() + activePreset.slice(1)
-              : "Custom"}
-          </Typography>
-          <Typography variant="body2" sx={{ mt: 1 }}>
-            Current transformations:{" "}
-            {Object.entries(options)
-              .filter(([, value]) => value !== undefined && value !== "")
-              .map(([key, value]) => `${key}=${value}`)
-              .join(", ")}
-          </Typography>
-        </TransformationsInfo>
-      )} */}
     </StyledPreviewPanel>
   );
 };

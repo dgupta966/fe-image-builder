@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
-import { Dialog, Paper, Box, Button, IconButton } from '@mui/material';
-import type { Theme } from '@mui/material/styles';
+import styled from "@emotion/styled";
+import { Dialog, Paper, Box, Button, IconButton } from "@mui/material";
+import type { Theme } from "@mui/material/styles";
 
 export const StyledDialog = styled(Dialog)<{ theme: Theme }>`
   & .MuiDialog-paper {
@@ -10,15 +10,13 @@ export const StyledDialog = styled(Dialog)<{ theme: Theme }>`
     height: 90vh;
     max-height: 90vh;
     background: ${({ theme }) =>
-      theme.palette.mode === 'dark'
+      theme.palette.mode === "dark"
         ? `linear-gradient(135deg, ${theme.palette.background.paper} 0%, ${theme.palette.grey[900]} 100%)`
-        : `linear-gradient(135deg, ${theme.palette.background.paper} 0%, ${theme.palette.grey[50]} 100%)`
-    };
+        : `linear-gradient(135deg, ${theme.palette.background.paper} 0%, ${theme.palette.grey[50]} 100%)`};
     box-shadow: ${({ theme }) =>
-      theme.palette.mode === 'dark'
-        ? '0 25px 50px rgba(0, 0, 0, 0.5)'
-        : '0 25px 50px rgba(0, 0, 0, 0.25)'
-    };
+      theme.palette.mode === "dark"
+        ? "0 25px 50px rgba(0, 0, 0, 0.5)"
+        : "0 25px 50px rgba(0, 0, 0, 0.25)"};
     backdrop-filter: blur(10px);
     z-index: 1300;
 
@@ -39,10 +37,9 @@ export const DialogHeader = styled(Box)<{ theme: Theme }>`
   padding: 24px;
   border-bottom: 1px solid ${({ theme }) => theme.palette.divider};
   background: ${({ theme }) =>
-    theme.palette.mode === 'dark'
+    theme.palette.mode === "dark"
       ? theme.palette.grey[900]
-      : theme.palette.grey[100]
-  };
+      : theme.palette.grey[100]};
   color: ${({ theme }) => theme.palette.text.primary};
   border-radius: 24px 24px 0 0;
 `;
@@ -59,7 +56,8 @@ export const HeaderTitle = styled(Box)<{ theme: Theme }>`
 `;
 
 export const ContentContainer = styled(Box)<{ theme: Theme }>`
-   overflow: hidden;
+  flex: 1;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -114,10 +112,9 @@ export const PresetsContainer = styled(Box)<{ theme: Theme }>`
     &:hover {
       transform: translateY(-2px);
       box-shadow: ${({ theme }) =>
-        theme.palette.mode === 'dark'
-          ? '0 4px 8px rgba(0, 0, 0, 0.3)'
-          : '0 4px 8px rgba(0, 0, 0, 0.15)'
-      };
+        theme.palette.mode === "dark"
+          ? "0 4px 8px rgba(0, 0, 0, 0.3)"
+          : "0 4px 8px rgba(0, 0, 0, 0.15)"};
       background: ${({ theme }) => theme.palette.action.hover};
     }
   }
@@ -126,26 +123,23 @@ export const PresetsContainer = styled(Box)<{ theme: Theme }>`
   & .MuiChip-filled.MuiChip-colorPrimary {
     border: 2px solid ${({ theme }) => theme.palette.primary.main};
     background: ${({ theme }) =>
-      theme.palette.mode === 'dark'
+      theme.palette.mode === "dark"
         ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`
-        : `linear-gradient(135deg, ${theme.palette.primary.light} 0%, ${theme.palette.primary.main} 100%)`
-    };
+        : `linear-gradient(135deg, ${theme.palette.primary.light} 0%, ${theme.palette.primary.main} 100%)`};
     color: ${({ theme }) => theme.palette.primary.contrastText};
     box-shadow: ${({ theme }) =>
-      theme.palette.mode === 'dark'
-        ? '0 4px 12px rgba(0, 0, 0, 0.4)'
-        : '0 4px 12px rgba(0, 0, 0, 0.2)'
-    };
+      theme.palette.mode === "dark"
+        ? "0 4px 12px rgba(0, 0, 0, 0.4)"
+        : "0 4px 12px rgba(0, 0, 0, 0.2)"};
     font-weight: 600;
     transform: translateY(-1px);
 
     &:hover {
       transform: translateY(-3px);
       box-shadow: ${({ theme }) =>
-        theme.palette.mode === 'dark'
-          ? '0 6px 16px rgba(0, 0, 0, 0.5)'
-          : '0 6px 16px rgba(0, 0, 0, 0.3)'
-      };
+        theme.palette.mode === "dark"
+          ? "0 6px 16px rgba(0, 0, 0, 0.5)"
+          : "0 6px 16px rgba(0, 0, 0, 0.3)"};
       border-color: ${({ theme }) => theme.palette.primary.light};
     }
   }
@@ -156,22 +150,33 @@ export const PresetsContainer = styled(Box)<{ theme: Theme }>`
 
   /* Add a subtle gradient to indicate scrollability */
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     width: 20px;
-    background: linear-gradient(to left, ${({ theme }) => theme.palette.background.default}, transparent);
+    background: linear-gradient(
+      to left,
+      ${({ theme }) => theme.palette.background.default},
+      transparent
+    );
     pointer-events: none;
   }
 `;
 
 export const MainContent = styled(Box)`
   display: flex;
-  gap: 24px;
+  gap: 12px;
   flex: 1;
   overflow: hidden;
+
+  /* Responsive layout */
+  @media (max-width: 1200px) {
+    flex-direction: column;
+    gap: 16px;
+    overflow: visible;
+  }
 `;
 
 export const ControlsPanel = styled(Paper)<{ theme: Theme }>`
@@ -180,13 +185,20 @@ export const ControlsPanel = styled(Paper)<{ theme: Theme }>`
   border-radius: 16px;
   background: ${({ theme }) => theme.palette.background.paper};
   box-shadow: ${({ theme }) =>
-    theme.palette.mode === 'dark'
-      ? '0 4px 12px rgba(0, 0, 0, 0.3)'
-      : '0 4px 12px rgba(0, 0, 0, 0.1)'
-  };
+    theme.palette.mode === "dark"
+      ? "0 4px 12px rgba(0, 0, 0, 0.3)"
+      : "0 4px 12px rgba(0, 0, 0, 0.1)"};
   display: flex;
   flex-direction: column;
   overflow: hidden;
+
+  /* Responsive adjustments */
+  @media (max-width: 1200px) {
+    flex: none;
+    height: auto;
+    max-height: 400px;
+    padding: 16px;
+  }
 `;
 
 export const TabsContainer = styled(Box)<{ theme: Theme }>`
@@ -241,15 +253,21 @@ export const TabContent = styled(Box)<{ theme: Theme }>`
 export const PreviewPanel = styled(Paper)<{ theme: Theme }>`
   flex: 1;
   padding: 24px;
-  border-radius: 16px;
-  background: ${({ theme }) => theme.palette.background.paper};
+  border-radius: 0px;
+  background: #000;
   box-shadow: ${({ theme }) =>
-    theme.palette.mode === 'dark'
-      ? '0 4px 12px rgba(0, 0, 0, 0.3)'
-      : '0 4px 12px rgba(0, 0, 0, 0.1)'
-  };
+    theme.palette.mode === "dark"
+      ? "0 4px 12px rgba(0, 0, 0, 0.3)"
+      : "0 4px 12px rgba(0, 0, 0, 0.1)"};
   display: flex;
   flex-direction: column;
+
+  /* Responsive adjustments */
+  @media (max-width: 1200px) {
+    flex: none;
+    height: 400px;
+    padding: 16px;
+  }
 `;
 
 export const PreviewHeader = styled(Box)<{ theme: Theme }>`
@@ -264,15 +282,13 @@ export const PreviewHeader = styled(Box)<{ theme: Theme }>`
   }
 `;
 
- 
-export const PreviewImage = styled('img')<{ theme: Theme }>`
+export const PreviewImage = styled("img")<{ theme: Theme }>`
   max-width: 100%;
   max-height: 100%;
-   box-shadow: ${({ theme }) =>
-    theme.palette.mode === 'dark'
-      ? '0 4px 12px rgba(0, 0, 0, 0.4)'
-      : '0 4px 12px rgba(0, 0, 0, 0.15)'
-  };
+  box-shadow: ${({ theme }) =>
+    theme.palette.mode === "dark"
+      ? "0 4px 12px rgba(0, 0, 0, 0.4)"
+      : "0 4px 12px rgba(0, 0, 0, 0.15)"};
   transition: all 0.3s ease-in-out;
 `;
 
@@ -280,15 +296,14 @@ export const TransformationsInfo = styled(Box)<{ theme: Theme }>`
   margin-top: 16px;
   padding: 16px;
   background: ${({ theme }) =>
-    theme.palette.mode === 'dark'
+    theme.palette.mode === "dark"
       ? theme.palette.grey[800]
-      : theme.palette.grey[100]
-  };
+      : theme.palette.grey[100]};
   border-radius: 8px;
   & .MuiTypography-root {
     font-size: 0.875rem;
     color: ${({ theme }) => theme.palette.text.secondary};
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
   }
 `;
 
@@ -296,10 +311,9 @@ export const DialogFooter = styled(Box)<{ theme: Theme }>`
   padding: 24px;
   border-top: 1px solid ${({ theme }) => theme.palette.divider};
   background: ${({ theme }) =>
-    theme.palette.mode === 'dark'
+    theme.palette.mode === "dark"
       ? theme.palette.grey[900]
-      : theme.palette.grey[50]
-  };
+      : theme.palette.grey[50]};
   border-radius: 0 0 24px 24px;
   display: flex;
   justify-content: flex-end;
@@ -312,18 +326,16 @@ export const StyledButton = styled(Button)<{ theme: Theme }>`
   text-transform: none;
   font-weight: 500;
   box-shadow: ${({ theme }) =>
-    theme.palette.mode === 'dark'
-      ? '0 2px 8px rgba(0, 0, 0, 0.3)'
-      : '0 2px 8px rgba(0, 0, 0, 0.1)'
-  };
+    theme.palette.mode === "dark"
+      ? "0 2px 8px rgba(0, 0, 0, 0.3)"
+      : "0 2px 8px rgba(0, 0, 0, 0.1)"};
   transition: all 0.2s ease-in-out;
   &:hover {
     transform: translateY(-1px);
     box-shadow: ${({ theme }) =>
-      theme.palette.mode === 'dark'
-        ? '0 4px 12px rgba(0, 0, 0, 0.4)'
-        : '0 4px 12px rgba(0, 0, 0, 0.15)'
-    };
+      theme.palette.mode === "dark"
+        ? "0 4px 12px rgba(0, 0, 0, 0.4)"
+        : "0 4px 12px rgba(0, 0, 0, 0.15)"};
   }
 `;
 
@@ -337,17 +349,15 @@ export const PrimaryButton = styled(StyledButton)<{ theme: Theme }>`
 
 export const SecondaryButton = styled(StyledButton)<{ theme: Theme }>`
   background: ${({ theme }) =>
-    theme.palette.mode === 'dark'
+    theme.palette.mode === "dark"
       ? theme.palette.grey[800]
-      : theme.palette.grey[200]
-  };
+      : theme.palette.grey[200]};
   color: ${({ theme }) => theme.palette.text.primary};
   &:hover {
     background: ${({ theme }) =>
-      theme.palette.mode === 'dark'
+      theme.palette.mode === "dark"
         ? theme.palette.grey[700]
-        : theme.palette.grey[300]
-    };
+        : theme.palette.grey[300]};
   }
 `;
 
