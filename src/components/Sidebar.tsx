@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Drawer,
   Box,
@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/useAuth";
+import { useSidebar } from "../contexts/useSidebar";
 import {
   sidebarWrapper,
   headerBox,
@@ -49,8 +50,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const { logout } = useAuth();
-
-  const [collapsed, setCollapsed] = useState(false);
+  const { collapsed, toggleCollapsed } = useSidebar();
 
   const handleNavigation = (path: string) => {
     navigate(path);
@@ -71,7 +71,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     if (isMobile && onMobileToggle) {
       onMobileToggle();
     } else {
-      setCollapsed(!collapsed);
+      toggleCollapsed();
     }
   };
 

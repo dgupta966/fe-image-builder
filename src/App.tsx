@@ -1,29 +1,38 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { CssBaseline, Box } from '@mui/material';
-import { useState } from 'react';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+import { CssBaseline, Box } from "@mui/material";
+import { useState } from "react";
 
-import { AuthProvider } from './contexts/AuthContext.tsx';
-import ThemeContextProvider from './contexts/ThemeProvider.tsx';
-import Header from './components/Header.tsx';
-import Sidebar from './components/Sidebar.tsx';
-import HomePage from './pages/HomePage.tsx';
-import LoginPage from './pages/LoginPage.tsx';
-import DashboardPage from './pages/DashboardPage.tsx';
-import ImageOptimizerPage from './pages/ImageOptimizerPage.tsx';
-import GoogleDrivePage from './pages/GoogleDrivePage.tsx';
-import ThumbnailCreatorPage from './pages/ThumbnailCreatorPage.tsx';
-import ProfilePage from './pages/ProfilePage.tsx';
-import CloudinaryPage from './pages/CloudinaryPage.tsx';
-import { useAuth } from './contexts/useAuth';
+import { AuthProvider } from "./contexts/AuthContext.tsx";
+import ThemeContextProvider from "./contexts/ThemeProvider.tsx";
+import { SidebarProvider } from "./contexts/SidebarContext.tsx";
+import Header from "./components/Header.tsx";
+import Sidebar from "./components/Sidebar.tsx";
+import HomePage from "./pages/HomePage.tsx";
+import LoginPage from "./pages/LoginPage.tsx";
+import DashboardPage from "./pages/DashboardPage.tsx";
+import ImageOptimizerPage from "./pages/ImageOptimizerPage.tsx";
+import GoogleDrivePage from "./pages/GoogleDrivePage.tsx";
+import ThumbnailCreatorPage from "./pages/ThumbnailCreatorPage.tsx";
+import ProfilePage from "./pages/ProfilePage.tsx";
+import CloudinaryPage from "./pages/CloudinaryPage.tsx";
+import ImageEditorPage from "./pages/ImageEditorPage.tsx";
+import { useAuth } from "./contexts/useAuth";
+import { useSidebar } from "./contexts/useSidebar";
 
 function AppContent() {
   const location = useLocation();
   const { isAuthenticated } = useAuth();
-  
+  const { collapsed } = useSidebar();
+
   const [mobileOpen, setMobileOpen] = useState(false);
-  
-  const isHomePage = location.pathname === '/';
-  const isLoginPage = location.pathname === '/login';
+
+  const isHomePage = location.pathname === "/";
+  const isLoginPage = location.pathname === "/login";
 
   const handleMobileMenuToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -36,7 +45,7 @@ function AppContent() {
   if (isHomePage || isLoginPage || !isAuthenticated) {
     // Home page, login page, or unauthenticated users - layout without sidebar and header
     return (
-      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+      <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
@@ -51,26 +60,33 @@ function AppContent() {
     );
   }
 
+  const isImageEditorPage = location.pathname.startsWith("/image-editor");
+
   // Authenticated app pages layout with sidebar and header
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-      <Sidebar 
-        mobileOpen={mobileOpen}
-        onMobileClose={handleMobileMenuClose}
-        onMobileToggle={handleMobileMenuToggle}
-      />
-      <Box 
-        component="main" 
-        sx={{ 
+    <Box sx={{ minHeight: "100vh" }}>
+      {!isImageEditorPage && (
+        <Sidebar
+          mobileOpen={mobileOpen}
+          onMobileClose={handleMobileMenuClose}
+          onMobileToggle={handleMobileMenuToggle}
+        />
+      )}
+      <Box
+        component="main"
+        sx={{
           flexGrow: 1,
-          minHeight: '100vh',
-          bgcolor: 'background.default',
-          display: 'flex',
-          flexDirection: 'column',
-          width: { xs: '100%', md: 'auto' }, // Full width on mobile, auto on desktop
+          minHeight: "100vh",
+          bgcolor: "background.default",
+          display: "flex",
+          flexDirection: "column",
+          width: { xs: "100%", md: "auto" }, // Full width on mobile, auto on desktop
+          marginLeft: { xs: 0, md: !isImageEditorPage ? (collapsed ? "64px" : "280px") : 0 },
         }}
       >
-        <Header onMobileMenuToggle={handleMobileMenuToggle} />
+        {!isImageEditorPage && (
+          <Header onMobileMenuToggle={handleMobileMenuToggle} />
+        )}
         <Box sx={{ flexGrow: 1 }}>
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -79,8 +95,12 @@ function AppContent() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/optimizer" element={<ImageOptimizerPage />} />
             <Route path="/google-drive" element={<GoogleDrivePage />} />
-            <Route path="/thumbnail-creator" element={<ThumbnailCreatorPage />} />
+            <Route
+              path="/thumbnail-creator"
+              element={<ThumbnailCreatorPage />}
+            />
             <Route path="/cloudinary" element={<CloudinaryPage />} />
+            <Route path="/image-editor" element={<ImageEditorPage />} />
           </Routes>
         </Box>
       </Box>
@@ -93,9 +113,11 @@ function App() {
     <ThemeContextProvider>
       <CssBaseline />
       <AuthProvider>
-        <Router>
-          <AppContent />
-        </Router>
+        <SidebarProvider>
+          <Router>
+            <AppContent />
+          </Router>
+        </SidebarProvider>
       </AuthProvider>
     </ThemeContextProvider>
   );

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Typography, Box, Snackbar, Alert } from "@mui/material";
 import {
   deleteImage,
@@ -12,9 +13,9 @@ import {
 import UploadSection from "../components/cloudinary/UploadSection";
 import ImageGrid from "../components/cloudinary/ImageGrid";
 import EditImageDialog from "../components/cloudinary/EditImageDialog";
-import ImageTransformModal from "../components/cloudinary/ImageTransformModal";
 
 const CloudinaryPage: React.FC = () => {
+  const navigate = useNavigate();
   const [images, setImages] = useState<CloudinaryResource[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [isLoadingImages, setIsLoadingImages] = useState(false);
@@ -33,9 +34,6 @@ const CloudinaryPage: React.FC = () => {
     message: "",
     severity: "success",
   });
-  const [transformModalOpen, setTransformModalOpen] = useState(false);
-  const [transformImage, setTransformImage] =
-    useState<CloudinaryResource | null>(null);
 
   useEffect(() => {
     const loadImages = async () => {
@@ -128,8 +126,16 @@ const CloudinaryPage: React.FC = () => {
   };
 
   const handleTransform = (image: CloudinaryResource) => {
-    setTransformImage(image);
-    setTransformModalOpen(true);
+    // Navigate to image editor page with image data as URL parameters
+    const params = new URLSearchParams({
+      publicId: image.public_id,
+      secureUrl: image.secure_url,
+      format: image.format,
+      width: image.width.toString(),
+      height: image.height.toString(),
+      bytes: image.bytes.toString(),
+    });
+    navigate(`/image-editor?${params.toString()}`);
   };
 
   const handleCopyUrl = (url: string) => {
@@ -137,15 +143,6 @@ const CloudinaryPage: React.FC = () => {
     setSnackbar({
       open: true,
       message: "URL copied to clipboard",
-      severity: "success",
-    });
-  };
-
-  const handleTransformSave = (transformedUrl: string) => {
-    navigator.clipboard.writeText(transformedUrl);
-    setSnackbar({
-      open: true,
-      message: "Transformed URL copied to clipboard",
       severity: "success",
     });
   };
@@ -205,13 +202,6 @@ const CloudinaryPage: React.FC = () => {
         onClose={() => setEditDialogOpen(false)}
         onNameChange={setNewImageName}
         onConfirm={handleEditConfirm}
-      />
-
-      <ImageTransformModal
-        open={transformModalOpen}
-        image={transformImage}
-        onClose={() => setTransformModalOpen(false)}
-        onSave={handleTransformSave}
       />
 
       <Snackbar
