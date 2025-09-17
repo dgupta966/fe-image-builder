@@ -1,16 +1,12 @@
+import axios from 'axios';
+
 const cloudName =
   import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "your-cloud-name";
 const apiKey = import.meta.env.VITE_CLOUDINARY_API_KEY || "your-api-key";
 const apiSecret =
   import.meta.env.VITE_CLOUDINARY_API_SECRET || "your-api-secret";
 
-// Debug configuration
-console.log("Cloudinary Configuration Check:", {
-  cloudName: cloudName,
-  hasApiKey: !!apiKey && apiKey !== "your-api-key",
-  hasApiSecret: !!apiSecret && apiSecret !== "your-api-secret",
-  isConfigured: cloudName !== "your-cloud-name" && apiKey !== "your-api-key"
-});
+ 
 
 export interface CloudinaryImage {
   public_id: string;
@@ -93,17 +89,13 @@ export const uploadImage = async (file: File): Promise<UploadResult> => {
     });
 
     // ✅ Send upload request
-    const response = await fetch(`/api/cloudinary/image/upload`, {
-      method: "POST",
-      body: formData,
+    const response = await axios.post(`/api/cloudinary/image/upload`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Upload failed: ${response.status} - ${errorText}`);
-    }
-
-    const data = await response.json();
+    const data = response.data;
     console.log("Upload successful ✅", data);
 
     return {
@@ -153,20 +145,15 @@ export const deleteImage = async (publicId: string): Promise<DeleteResult> => {
       signature: signature.substring(0, 10) + "...", // Don't log full signature
     });
 
-    const response = await fetch(`/api/cloudinary/image/destroy`, {
-      method: "POST",
-      body: formData, // Use FormData instead of JSON
+    const response = await axios.post(`/api/cloudinary/image/destroy`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     });
 
     console.log("Delete response status:", response.status);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Delete failed:", response.status, errorText);
-      throw new Error(`Delete failed: ${response.status} - ${errorText}`);
-    }
-
-    const data = await response.json();
+    const data = response.data;
     console.log("Delete successful:", data);
 
     return {
@@ -198,24 +185,18 @@ export const editImage = async (
 ): Promise<EditResult> => {
   try {
     if (newName) {
-      const response = await fetch(`/api/cloudinary/image/rename`, {
-        method: "POST",
+      const response = await axios.post(`/api/cloudinary/image/rename`, {
+        from_public_id: publicId,
+        to_public_id: newName,
+        api_key: apiKey,
+        api_secret: apiSecret,
+      }, {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          from_public_id: publicId,
-          to_public_id: newName,
-          api_key: apiKey,
-          api_secret: apiSecret,
-        }),
       });
 
-      if (!response.ok) {
-        throw new Error(`Edit failed: ${response.statusText}`);
-      }
-
-      const data = await response.json();
+      const data = response.data;
 
       return {
         success: true,
@@ -259,22 +240,13 @@ export const getImages = async (): Promise<CloudinaryResource[]> => {
       throw new Error("Cloudinary API secret not configured");
     }
 
-    const response = await fetch(`/api/cloudinary/resources/image`, {
-      method: "GET",
+    const response = await axios.get(`/api/cloudinary/resources/image`, {
       headers: {
         Authorization: `Basic ${btoa(`${apiKey}:${apiSecret}`)}`,
       },
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("API Response:", response.status, errorText);
-      throw new Error(
-        `Failed to fetch images: ${response.status} - ${errorText}`
-      );
-    }
-
-    const data = await response.json();
+    const data = response.data;
 
     if (data.resources && Array.isArray(data.resources)) {
       return data.resources.map((resource: CloudinaryResource) => ({
