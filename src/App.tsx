@@ -20,7 +20,7 @@ import GoogleDrivePage from "./pages/GoogleDrivePage.tsx";
 import ThumbnailCreatorPage from "./pages/ThumbnailCreatorPage.tsx";
 import ProfilePage from "./pages/ProfilePage.tsx";
 import CloudinaryPage from "./pages/CloudinaryPage.tsx";
-import ImageEditorPage from "./pages/ImageEditorPage.tsx";
+import ImageEditorPage from "./pages/ImageEditor/ImageEditorPage.tsx";
 import { useAuth } from "./contexts/useAuth";
 import { useSidebar } from "./contexts/useSidebar";
 
