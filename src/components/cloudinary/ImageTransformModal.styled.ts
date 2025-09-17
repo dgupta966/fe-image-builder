@@ -283,8 +283,9 @@ export const PreviewHeader = styled(Box)<{ theme: Theme }>`
 `;
 
 export const PreviewImage = styled("img")<{ theme: Theme }>`
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   box-shadow: ${({ theme }) =>
     theme.palette.mode === "dark"
       ? "0 4px 12px rgba(0, 0, 0, 0.4)"

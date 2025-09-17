@@ -44,6 +44,13 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
         position: "relative",
         bgcolor: "transparent",
         height: "calc(100vh - 87px)",
+        overflow: "auto",
+        "&::-webkit-scrollbar": {
+          display: "none",
+        },
+        "&::-webkit-scrollbar-track": {
+          background: "transparent",
+        },
       }}
     >
       <Box
@@ -59,13 +66,12 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
         {transformedUrl ? (
           <Box
             sx={{
-              maxWidth: "100%",
-              maxHeight: "100%",
-              width: "auto",
-              height: "auto",
+              width: "100%",
+              height: "100%",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
+              overflow: "hidden",
             }}
           >
             <PreviewImage

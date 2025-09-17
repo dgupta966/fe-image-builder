@@ -32,7 +32,6 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
 }) => {
   const theme = useTheme();
   const tabLabels = [
-    "Presets",
     "Crop",
     "Resize",
     "Format",
@@ -43,10 +42,10 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
     "Artistic",
     "Optimize",
     "Advanced",
+    "Presets",
   ];
 
   const icons = [
-    Star,
     Crop,
     PhotoSizeSelectLarge,
     FormatColorFill,
@@ -57,6 +56,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
     Palette,
     Compress,
     Settings,
+    Star,
   ];
 
   return (
@@ -64,7 +64,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
       sx={{
         flex: "0 0 320px",
         maxWidth: 400,
-        minWidth: 350,
+        minWidth: 400,
         // height: "calc(100vh - 240px)",
         overflow: "hidden",
         display: "flex",

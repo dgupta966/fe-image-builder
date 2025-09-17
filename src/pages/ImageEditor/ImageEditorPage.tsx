@@ -191,41 +191,41 @@ const ImageEditorPage: React.FC = () => {
             onReset={resetTransformations}
           >
             {activeTab === 0 && (
+              <CropTab options={options} updateOption={updateOption} />
+            )}
+            {activeTab === 1 && (
+              <ResizeTab options={options} updateOption={updateOption} />
+            )}
+            {activeTab === 2 && (
+              <FormatTab options={options} updateOption={updateOption} />
+            )}
+            {activeTab === 3 && (
+              <EffectsTab options={options} updateOption={updateOption} />
+            )}
+            {activeTab === 4 && (
+              <FiltersTab options={options} updateOption={updateOption} />
+            )}
+            {activeTab === 5 && (
+              <AdjustTab options={options} updateOption={updateOption} />
+            )}
+            {activeTab === 6 && (
+              <TextTab options={options} updateOption={updateOption} />
+            )}
+            {activeTab === 7 && (
+              <ArtisticTab options={options} updateOption={updateOption} />
+            )}
+            {activeTab === 8 && (
+              <OptimizeTab options={options} updateOption={updateOption} />
+            )}
+            {activeTab === 9 && (
+              <AdvancedTab options={options} updateOption={updateOption} />
+            )}
+            {activeTab === 10 && (
               <PresetsTab
                 activePreset={activePreset}
                 onApplyPreset={applyPreset}
                 onReset={resetTransformations}
               />
-            )}
-            {activeTab === 1 && (
-              <CropTab options={options} updateOption={updateOption} />
-            )}
-            {activeTab === 2 && (
-              <ResizeTab options={options} updateOption={updateOption} />
-            )}
-            {activeTab === 3 && (
-              <FormatTab options={options} updateOption={updateOption} />
-            )}
-            {activeTab === 4 && (
-              <EffectsTab options={options} updateOption={updateOption} />
-            )}
-            {activeTab === 5 && (
-              <FiltersTab options={options} updateOption={updateOption} />
-            )}
-            {activeTab === 6 && (
-              <AdjustTab options={options} updateOption={updateOption} />
-            )}
-            {activeTab === 7 && (
-              <TextTab options={options} updateOption={updateOption} />
-            )}
-            {activeTab === 8 && (
-              <ArtisticTab options={options} updateOption={updateOption} />
-            )}
-            {activeTab === 9 && (
-              <OptimizeTab options={options} updateOption={updateOption} />
-            )}
-            {activeTab === 10 && (
-              <AdvancedTab options={options} updateOption={updateOption} />
             )}
           </ControlsPanel>
 
