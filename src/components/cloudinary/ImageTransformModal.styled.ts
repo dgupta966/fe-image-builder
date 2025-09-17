@@ -283,8 +283,9 @@ export const PreviewHeader = styled(Box)<{ theme: Theme }>`
 `;
 
 export const PreviewImage = styled("img")<{ theme: Theme }>`
+  width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center center;
   box-shadow: ${({ theme }) =>
     theme.palette.mode === "dark"
@@ -294,9 +295,9 @@ export const PreviewImage = styled("img")<{ theme: Theme }>`
   border-radius: 8px;
   display: block;
 
-  /* Better handling for portrait and landscape images */
+  /* Ensure proper fitting within aspect ratio container */
   @media (orientation: portrait) {
-    object-position: center top;
+    object-position: center center;
   }
 
   @media (orientation: landscape) {
