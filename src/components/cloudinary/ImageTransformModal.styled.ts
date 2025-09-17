@@ -283,8 +283,8 @@ export const PreviewHeader = styled(Box)<{ theme: Theme }>`
 `;
 
 export const PreviewImage = styled("img")<{ theme: Theme }>`
-  width: 100%;
-  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
   object-position: center center;
   box-shadow: ${({ theme }) =>
