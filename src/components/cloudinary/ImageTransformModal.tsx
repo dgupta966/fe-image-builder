@@ -11,6 +11,9 @@ import {
   Select,
   MenuItem,
   useTheme,
+  Slider,
+  Switch,
+  FormControlLabel,
 } from "@mui/material";
 import {
   Crop,
@@ -21,6 +24,11 @@ import {
   Save,
   Close,
   Refresh,
+  Filter,
+  Tune,
+  TextFields,
+  Palette,
+  Compress,
 } from "@mui/icons-material";
 import {
   buildTransformationUrl,
@@ -113,6 +121,22 @@ const ImageTransformModal: React.FC<ImageTransformModalProps> = ({
       brightness: { effect: "brightness:30" },
       contrast: { effect: "contrast:50" },
       saturation: { effect: "saturation:50" },
+
+      // New advanced presets
+      vintage: { effect: "sepia", contrast: 20, brightness: -10 },
+      dramatic: { contrast: 80, brightness: -20, saturation: 30 },
+      warm: { brightness: 20, saturation: 40, hue: 15 },
+      cool: { brightness: -10, saturation: 20, hue: -15 },
+      high_contrast: { contrast: 100, brightness: 10 },
+      soft_glow: { blur: 2, brightness: 15, saturation: 10 },
+      cartoon: { cartoonify: "color" },
+      sketch: { sketch: true },
+      pixel_art: { pixelate: 10 },
+      oil_painting: { oil_paint: 50 },
+      vignette_soft: { vignette: "30" },
+      vignette_strong: { vignette: "80" },
+      sharpen_light: { sharpen: 50 },
+      sharpen_strong: { sharpen: 200 },
     };
 
     const presetOptions = presets[preset];
@@ -199,6 +223,47 @@ const ImageTransformModal: React.FC<ImageTransformModalProps> = ({
           </PresetsContainer>
         </PresetsSection>
 
+        {/* Advanced Presets */}
+        <PresetsSection theme={theme}>
+          <Typography variant="h6" gutterBottom>
+            Advanced Presets
+          </Typography>
+          <PresetsContainer theme={theme}>
+            {[
+              { key: "vintage", label: "Vintage", icon: "📜" },
+              { key: "dramatic", label: "Dramatic", icon: "🎭" },
+              { key: "warm", label: "Warm", icon: "🌅" },
+              { key: "cool", label: "Cool", icon: "❄️" },
+              { key: "high_contrast", label: "High Contrast", icon: "⚡" },
+              { key: "soft_glow", label: "Soft Glow", icon: "✨" },
+              { key: "cartoon", label: "Cartoon", icon: "🎨" },
+              { key: "sketch", label: "Sketch", icon: "✏️" },
+              { key: "pixel_art", label: "Pixel Art", icon: "🎮" },
+              { key: "oil_painting", label: "Oil Paint", icon: "🎭" },
+              { key: "vignette_soft", label: "Soft Vignette", icon: "🌑" },
+              { key: "vignette_strong", label: "Strong Vignette", icon: "🌚" },
+              { key: "sharpen_light", label: "Light Sharpen", icon: "🔍" },
+              { key: "sharpen_strong", label: "Strong Sharpen", icon: "🔎" },
+            ].map((preset) => (
+              <Chip
+                key={preset.key}
+                label={`${preset.icon} ${preset.label}`}
+                onClick={() => applyPreset(preset.key)}
+                variant={activePreset === preset.key ? "filled" : "outlined"}
+                color={activePreset === preset.key ? "primary" : "default"}
+                sx={{
+                  cursor: "pointer",
+                  minWidth: "fit-content",
+                  "&:hover": {
+                    transform: "translateY(-1px)",
+                    boxShadow: theme.shadows[2],
+                  },
+                }}
+              />
+            ))}
+          </PresetsContainer>
+        </PresetsSection>
+
         <MainContent>
           {/* Transformation Controls */}
           <ControlsPanel theme={theme}>
@@ -213,6 +278,11 @@ const ImageTransformModal: React.FC<ImageTransformModalProps> = ({
                 <Tab icon={<PhotoSizeSelectLarge />} label="Resize" />
                 <Tab icon={<FormatColorFill />} label="Format" />
                 <Tab icon={<BlurOn />} label="Effects" />
+                <Tab icon={<Filter />} label="Filters" />
+                <Tab icon={<Tune />} label="Adjust" />
+                <Tab icon={<TextFields />} label="Text" />
+                <Tab icon={<Palette />} label="Artistic" />
+                <Tab icon={<Compress />} label="Optimize" />
                 <Tab icon={<Settings />} label="Advanced" />
               </Tabs>
             </TabsContainer>
@@ -315,6 +385,301 @@ const ImageTransformModal: React.FC<ImageTransformModalProps> = ({
 
               {activeTab === 4 && (
                 <div>
+                  <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
+                    Filters
+                  </Typography>
+                  <FormControl fullWidth sx={{ mb: 2 }}>
+                    <InputLabel>Sharpen</InputLabel>
+                    <Select
+                      value={options.sharpen || ""}
+                      onChange={(e) => updateOption("sharpen", e.target.value ? Number(e.target.value) : undefined)}
+                    >
+                      <MenuItem value="">None</MenuItem>
+                      <MenuItem value="50">Light</MenuItem>
+                      <MenuItem value="100">Medium</MenuItem>
+                      <MenuItem value="200">Strong</MenuItem>
+                    </Select>
+                  </FormControl>
+
+                  <FormControl fullWidth sx={{ mb: 2 }}>
+                    <InputLabel>Vignette</InputLabel>
+                    <Select
+                      value={options.vignette || ""}
+                      onChange={(e) => updateOption("vignette", e.target.value || undefined)}
+                    >
+                      <MenuItem value="">None</MenuItem>
+                      <MenuItem value="30">Light</MenuItem>
+                      <MenuItem value="50">Medium</MenuItem>
+                      <MenuItem value="80">Strong</MenuItem>
+                    </Select>
+                  </FormControl>
+
+                  <TextField
+                    fullWidth
+                    label="Hue Rotate (degrees)"
+                    type="number"
+                    value={options.hue || ""}
+                    onChange={(e) => updateOption("hue", e.target.value ? Number(e.target.value) : undefined)}
+                    inputProps={{ min: -180, max: 180 }}
+                    sx={{ mb: 2 }}
+                  />
+                </div>
+              )}
+
+              {activeTab === 5 && (
+                <div>
+                  <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
+                    Color Adjustments
+                  </Typography>
+
+                  <Typography gutterBottom>Brightness</Typography>
+                  <Slider
+                    value={options.brightness || 0}
+                    onChange={(_, value) => updateOption("brightness", value as number)}
+                    min={-100}
+                    max={100}
+                    step={1}
+                    valueLabelDisplay="auto"
+                    sx={{ mb: 3 }}
+                  />
+
+                  <Typography gutterBottom>Contrast</Typography>
+                  <Slider
+                    value={options.contrast || 0}
+                    onChange={(_, value) => updateOption("contrast", value as number)}
+                    min={-100}
+                    max={100}
+                    step={1}
+                    valueLabelDisplay="auto"
+                    sx={{ mb: 3 }}
+                  />
+
+                  <Typography gutterBottom>Saturation</Typography>
+                  <Slider
+                    value={options.saturation || 0}
+                    onChange={(_, value) => updateOption("saturation", value as number)}
+                    min={-100}
+                    max={100}
+                    step={1}
+                    valueLabelDisplay="auto"
+                    sx={{ mb: 3 }}
+                  />
+
+                  <Typography gutterBottom>Exposure</Typography>
+                  <Slider
+                    value={options.exposure || 0}
+                    onChange={(_, value) => updateOption("exposure", value as number)}
+                    min={-100}
+                    max={100}
+                    step={1}
+                    valueLabelDisplay="auto"
+                    sx={{ mb: 3 }}
+                  />
+
+                  <Typography gutterBottom>Gamma</Typography>
+                  <Slider
+                    value={options.gamma || 0}
+                    onChange={(_, value) => updateOption("gamma", value as number)}
+                    min={-50}
+                    max={50}
+                    step={1}
+                    valueLabelDisplay="auto"
+                    sx={{ mb: 2 }}
+                  />
+                </div>
+              )}
+
+              {activeTab === 6 && (
+                <div>
+                  <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
+                    Text Overlay
+                  </Typography>
+
+                  <TextField
+                    fullWidth
+                    label="Text"
+                    value={options.text || ""}
+                    onChange={(e) => updateOption("text", e.target.value || undefined)}
+                    sx={{ mb: 2 }}
+                  />
+
+                  <FormControl fullWidth sx={{ mb: 2 }}>
+                    <InputLabel>Font Family</InputLabel>
+                    <Select
+                      value={options.text_font_family || ""}
+                      onChange={(e) => updateOption("text_font_family", e.target.value || undefined)}
+                    >
+                      <MenuItem value="Arial">Arial</MenuItem>
+                      <MenuItem value="Helvetica">Helvetica</MenuItem>
+                      <MenuItem value="Times New Roman">Times New Roman</MenuItem>
+                      <MenuItem value="Courier New">Courier New</MenuItem>
+                      <MenuItem value="Impact">Impact</MenuItem>
+                    </Select>
+                  </FormControl>
+
+                  <TextField
+                    fullWidth
+                    label="Font Size"
+                    type="number"
+                    value={options.text_font_size || ""}
+                    onChange={(e) => updateOption("text_font_size", e.target.value ? Number(e.target.value) : undefined)}
+                    inputProps={{ min: 10, max: 200 }}
+                    sx={{ mb: 2 }}
+                  />
+
+                  <TextField
+                    fullWidth
+                    label="Text Color (Hex)"
+                    value={options.text_color || ""}
+                    onChange={(e) => updateOption("text_color", e.target.value || undefined)}
+                    placeholder="#000000"
+                    sx={{ mb: 2 }}
+                  />
+
+                  <FormControl fullWidth sx={{ mb: 2 }}>
+                    <InputLabel>Position</InputLabel>
+                    <Select
+                      value={options.text_position || ""}
+                      onChange={(e) => updateOption("text_position", e.target.value || undefined)}
+                    >
+                      <MenuItem value="north_west">Top Left</MenuItem>
+                      <MenuItem value="north">Top Center</MenuItem>
+                      <MenuItem value="north_east">Top Right</MenuItem>
+                      <MenuItem value="west">Middle Left</MenuItem>
+                      <MenuItem value="center">Center</MenuItem>
+                      <MenuItem value="east">Middle Right</MenuItem>
+                      <MenuItem value="south_west">Bottom Left</MenuItem>
+                      <MenuItem value="south">Bottom Center</MenuItem>
+                      <MenuItem value="south_east">Bottom Right</MenuItem>
+                    </Select>
+                  </FormControl>
+                </div>
+              )}
+
+              {activeTab === 7 && (
+                <div>
+                  <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
+                    Artistic Effects
+                  </Typography>
+
+                  <FormControl fullWidth sx={{ mb: 2 }}>
+                    <InputLabel>Cartoon Effect</InputLabel>
+                    <Select
+                      value={options.cartoonify || ""}
+                      onChange={(e) => updateOption("cartoonify", e.target.value || undefined)}
+                    >
+                      <MenuItem value="">None</MenuItem>
+                      <MenuItem value="bw">Black & White Cartoon</MenuItem>
+                      <MenuItem value="color">Color Cartoon</MenuItem>
+                    </Select>
+                  </FormControl>
+
+                  <FormControl fullWidth sx={{ mb: 2 }}>
+                    <InputLabel>Oil Paint</InputLabel>
+                    <Select
+                      value={options.oil_paint || ""}
+                      onChange={(e) => updateOption("oil_paint", e.target.value ? Number(e.target.value) : undefined)}
+                    >
+                      <MenuItem value="">None</MenuItem>
+                      <MenuItem value="30">Light</MenuItem>
+                      <MenuItem value="50">Medium</MenuItem>
+                      <MenuItem value="80">Heavy</MenuItem>
+                    </Select>
+                  </FormControl>
+
+                  <FormControl fullWidth sx={{ mb: 2 }}>
+                    <InputLabel>Pixelate</InputLabel>
+                    <Select
+                      value={options.pixelate || ""}
+                      onChange={(e) => updateOption("pixelate", e.target.value ? Number(e.target.value) : undefined)}
+                    >
+                      <MenuItem value="">None</MenuItem>
+                      <MenuItem value="3">Small Pixels</MenuItem>
+                      <MenuItem value="10">Medium Pixels</MenuItem>
+                      <MenuItem value="20">Large Pixels</MenuItem>
+                    </Select>
+                  </FormControl>
+
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={options.sketch || false}
+                        onChange={(e) => updateOption("sketch", e.target.checked)}
+                      />
+                    }
+                    label="Sketch Effect"
+                    sx={{ mb: 2 }}
+                  />
+
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={options.negate || false}
+                        onChange={(e) => updateOption("negate", e.target.checked)}
+                      />
+                    }
+                    label="Negative Effect"
+                  />
+                </div>
+              )}
+
+              {activeTab === 8 && (
+                <div>
+                  <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
+                    Optimization
+                  </Typography>
+
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={options.auto_optimize || false}
+                        onChange={(e) => updateOption("auto_optimize", e.target.checked)}
+                      />
+                    }
+                    label="Auto Optimize"
+                    sx={{ mb: 2 }}
+                  />
+
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={options.auto_format || false}
+                        onChange={(e) => updateOption("auto_format", e.target.checked)}
+                      />
+                    }
+                    label="Auto Format"
+                    sx={{ mb: 2 }}
+                  />
+
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={options.progressive || false}
+                        onChange={(e) => updateOption("progressive", e.target.checked)}
+                      />
+                    }
+                    label="Progressive JPEG"
+                    sx={{ mb: 2 }}
+                  />
+
+                  <TextField
+                    fullWidth
+                    label="Device Pixel Ratio"
+                    type="number"
+                    value={options.dpr || ""}
+                    onChange={(e) => updateOption("dpr", e.target.value ? Number(e.target.value) : undefined)}
+                    inputProps={{ min: 0.5, max: 3, step: 0.1 }}
+                    sx={{ mb: 2 }}
+                  />
+                </div>
+              )}
+
+              {activeTab === 9 && (
+                <div>
+                  <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
+                    Advanced Settings
+                  </Typography>
+
                   <TextField
                     fullWidth
                     label="Quality (1-100)"
@@ -338,6 +703,25 @@ const ImageTransformModal: React.FC<ImageTransformModalProps> = ({
                     type="number"
                     value={options.radius || ""}
                     onChange={(e) => updateOption("radius", e.target.value ? Number(e.target.value) : undefined)}
+                    sx={{ mb: 2 }}
+                  />
+
+                  <TextField
+                    fullWidth
+                    label="Opacity (0-100)"
+                    type="number"
+                    value={options.opacity || ""}
+                    onChange={(e) => updateOption("opacity", e.target.value ? Number(e.target.value) : undefined)}
+                    inputProps={{ min: 0, max: 100 }}
+                    sx={{ mb: 2 }}
+                  />
+
+                  <TextField
+                    fullWidth
+                    label="Background Color (Hex)"
+                    value={options.background || ""}
+                    onChange={(e) => updateOption("background", e.target.value || undefined)}
+                    placeholder="#ffffff"
                     sx={{ mb: 2 }}
                   />
                 </div>

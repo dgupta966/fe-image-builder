@@ -342,6 +342,37 @@ export interface TransformationOptions {
   background?: string;
   color?: string;
   dpr?: number;
+
+  // Filters
+  sharpen?: number;
+  blur?: number;
+  vignette?: string;
+  hue?: number;
+  saturation?: number;
+  brightness?: number;
+  contrast?: number;
+  gamma?: number;
+  exposure?: number;
+
+  // Text overlays
+  text?: string;
+  text_font_family?: string;
+  text_font_size?: number;
+  text_font_weight?: string;
+  text_color?: string;
+  text_position?: string;
+
+  // Artistic effects
+  cartoonify?: string;
+  oil_paint?: number;
+  pixelate?: number;
+  sketch?: boolean;
+  negate?: boolean;
+
+  // Optimization
+  auto_optimize?: boolean;
+  auto_format?: boolean;
+  progressive?: boolean;
 }
 
 export const buildTransformationUrl = (
@@ -375,6 +406,37 @@ export const buildTransformationUrl = (
   if (options.background) transformations.push(`b_${options.background}`);
   if (options.color) transformations.push(`co_${options.color}`);
   if (options.dpr) transformations.push(`dpr_${options.dpr}`);
+
+  // Filters
+  if (options.sharpen) transformations.push(`e_sharpen:${options.sharpen}`);
+  if (options.blur) transformations.push(`e_blur:${options.blur}`);
+  if (options.vignette) transformations.push(`e_vignette:${options.vignette}`);
+  if (options.hue !== undefined) transformations.push(`e_hue:${options.hue}`);
+  if (options.saturation !== undefined) transformations.push(`e_saturation:${options.saturation}`);
+  if (options.brightness !== undefined) transformations.push(`e_brightness:${options.brightness}`);
+  if (options.contrast !== undefined) transformations.push(`e_contrast:${options.contrast}`);
+  if (options.gamma !== undefined) transformations.push(`e_gamma:${options.gamma}`);
+  if (options.exposure !== undefined) transformations.push(`e_exposure:${options.exposure}`);
+
+  // Text overlays
+  if (options.text) {
+    let textTransform = `l_text:${encodeURIComponent(options.text_font_family || 'Arial')}_${options.text_font_size || 30}_${encodeURIComponent(options.text_color || '000000')}:${encodeURIComponent(options.text)}`;
+    if (options.text_font_weight) textTransform += `,w_${options.text_font_weight}`;
+    if (options.text_position) textTransform += `,g_${options.text_position}`;
+    transformations.push(textTransform);
+  }
+
+  // Artistic effects
+  if (options.cartoonify) transformations.push(`e_cartoonify:${options.cartoonify}`);
+  if (options.oil_paint) transformations.push(`e_oil_paint:${options.oil_paint}`);
+  if (options.pixelate) transformations.push(`e_pixelate:${options.pixelate}`);
+  if (options.sketch) transformations.push(`e_sketch`);
+  if (options.negate) transformations.push(`e_negate`);
+
+  // Optimization
+  if (options.auto_optimize) transformations.push(`f_auto`);
+  if (options.auto_format) transformations.push(`f_auto`);
+  if (options.progressive) transformations.push(`fl_progressive`);
 
   const transformationString = transformations.join(",");
   const baseUrl = `https://res.cloudinary.com/${cloudName}/image/upload`;
