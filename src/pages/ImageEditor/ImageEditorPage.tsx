@@ -11,8 +11,6 @@ import { ContentContainer, MainContent } from "../../components/cloudinary/Image
 import Header from "./Header";
 import ControlsPanel from "./ControlsPanel";
 import PresetsTab from "./PresetsTab";
-import CropTab from "./CropTab";
-import ResizeTab from "./ResizeTab";
 import FormatTab from "./FormatTab";
 import EffectsTab from "./EffectsTab";
 import FiltersTab from "./FiltersTab";
@@ -23,6 +21,7 @@ import OptimizeTab from "./OptimizeTab";
 import AdvancedTab from "./AdvancedTab";
 import PreviewPanel from "./PreviewPanel";
 import ThumbnailsPanel from "./ThumbnailsPanel";
+import CropResizeTab from "./CropResizeTab";
 
 const ImageEditorPage: React.FC = () => {
   const navigate = useNavigate();
@@ -191,36 +190,33 @@ const ImageEditorPage: React.FC = () => {
             onReset={resetTransformations}
           >
             {activeTab === 0 && (
-              <CropTab options={options} updateOption={updateOption} />
+              <CropResizeTab options={options} updateOption={updateOption} />
             )}
             {activeTab === 1 && (
-              <ResizeTab options={options} updateOption={updateOption} />
-            )}
-            {activeTab === 2 && (
               <FormatTab options={options} updateOption={updateOption} />
             )}
-            {activeTab === 3 && (
+            {activeTab === 2 && (
               <EffectsTab options={options} updateOption={updateOption} />
             )}
-            {activeTab === 4 && (
+            {activeTab === 3 && (
               <FiltersTab options={options} updateOption={updateOption} />
             )}
-            {activeTab === 5 && (
+            {activeTab === 4 && (
               <AdjustTab options={options} updateOption={updateOption} />
             )}
-            {activeTab === 6 && (
+            {activeTab === 5 && (
               <TextTab options={options} updateOption={updateOption} />
             )}
-            {activeTab === 7 && (
+            {activeTab === 6 && (
               <ArtisticTab options={options} updateOption={updateOption} />
             )}
-            {activeTab === 8 && (
+            {activeTab === 7 && (
               <OptimizeTab options={options} updateOption={updateOption} />
             )}
-            {activeTab === 9 && (
+            {activeTab === 8 && (
               <AdvancedTab options={options} updateOption={updateOption} />
             )}
-            {activeTab === 10 && (
+            {activeTab === 9 && (
               <PresetsTab
                 activePreset={activePreset}
                 onApplyPreset={applyPreset}

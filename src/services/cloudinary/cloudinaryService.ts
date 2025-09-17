@@ -343,6 +343,13 @@ export interface TransformationOptions {
   color?: string;
   dpr?: number;
 
+  // Aspect ratio
+  aspectRatio?: string;
+
+  // Flip and rotate
+  flip?: boolean;
+  flop?: boolean;
+
   // Filters
   sharpen?: number;
   blur?: number;
@@ -395,12 +402,16 @@ export const buildTransformationUrl = (
   if (options.width) transformations.push(`w_${options.width}`);
   if (options.height) transformations.push(`h_${options.height}`);
   if (options.crop) transformations.push(`c_${options.crop}`);
+  if (options.aspectRatio) transformations.push(`ar_${options.aspectRatio}`);
   if (options.gravity) transformations.push(`g_${options.gravity}`);
   if (options.format) transformations.push(`f_${options.format}`);
   if (options.quality) transformations.push(`q_${options.quality}`);
   if (options.effect) transformations.push(`e_${options.effect}`);
   if (options.radius !== undefined) transformations.push(`r_${options.radius}`);
+  if (options.flip) transformations.push(`a_flip`);
+  if (options.flop) transformations.push(`a_flop`);
   if (options.angle) transformations.push(`a_${options.angle}`);
+  if (options.flip || options.flop) transformations.push(`v_${Date.now()}`);
   if (options.opacity !== undefined)
     transformations.push(`o_${options.opacity}`);
   if (options.background) transformations.push(`b_${options.background}`);

@@ -2,7 +2,6 @@ import React from "react";
 import { Box, Tooltip, Typography } from "@mui/material";
 import {
   Crop,
-  PhotoSizeSelectLarge,
   FormatColorFill,
   BlurOn,
   Settings,
@@ -32,8 +31,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
 }) => {
   const theme = useTheme();
   const tabLabels = [
-    "Crop",
-    "Resize",
+    "Crop & Resize",
     "Format",
     "Effects",
     "Filters",
@@ -47,7 +45,6 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
 
   const icons = [
     Crop,
-    PhotoSizeSelectLarge,
     FormatColorFill,
     BlurOn,
     Filter,

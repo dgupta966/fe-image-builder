@@ -283,14 +283,46 @@ export const PreviewHeader = styled(Box)<{ theme: Theme }>`
 `;
 
 export const PreviewImage = styled("img")<{ theme: Theme }>`
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
   box-shadow: ${({ theme }) =>
     theme.palette.mode === "dark"
       ? "0 4px 12px rgba(0, 0, 0, 0.4)"
       : "0 4px 12px rgba(0, 0, 0, 0.15)"};
   transition: all 0.3s ease-in-out;
+  border-radius: 8px;
+  display: block;
+
+  /* Better handling for portrait and landscape images */
+  @media (orientation: portrait) {
+    object-position: center top;
+  }
+
+  @media (orientation: landscape) {
+    object-position: center center;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    object-fit: contain;
+    border-radius: 4px;
+    object-position: center center;
+  }
+
+  /* Smooth loading animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  animation: fadeIn 0.3s ease-out;
 `;
 
 export const TransformationsInfo = styled(Box)<{ theme: Theme }>`

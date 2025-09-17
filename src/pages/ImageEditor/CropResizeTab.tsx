@@ -1,23 +1,9 @@
 import React from "react";
-import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Box,
-  IconButton,
-   Divider,
-  Tooltip,
-} from "@mui/material";
-import {
-  RotateCw,
-  RotateCcw,
-  FlipHorizontal,
-  FlipVertical,
-} from "lucide-react";
+import { TextField, FormControl, InputLabel, Select, MenuItem, Box, IconButton, Divider, Tooltip } from "@mui/material";
+import { RotateCw, RotateCcw, FlipHorizontal, FlipVertical } from "lucide-react";
 import type { TransformationOptions } from "../../services/cloudinary/cloudinaryService";
 
-interface CropTabProps {
+interface CropResizeTabProps {
   options: TransformationOptions;
   updateOption: <K extends keyof TransformationOptions>(
     key: K,
@@ -25,7 +11,45 @@ interface CropTabProps {
   ) => void;
 }
 
-const CropTab: React.FC<CropTabProps> = ({ options, updateOption }) => {
+const CropResizeTab: React.FC<CropResizeTabProps> = ({ options, updateOption }) => {
+  const [selectedAspectRatio, setSelectedAspectRatio] = React.useState("");
+
+  React.useEffect(() => {
+    // Sync selectedAspectRatio with options.aspectRatio
+    if (options.aspectRatio) {
+      setSelectedAspectRatio(options.aspectRatio);
+    } else {
+      setSelectedAspectRatio("");
+    }
+  }, [options.aspectRatio]);
+
+  const aspectRatios = [
+    { value: "", label: "Custom" },
+    { value: "1:1", label: "Square (1:1)" },
+    { value: "4:3", label: "Landscape (4:3)" },
+    { value: "3:2", label: "Landscape (3:2)" },
+    { value: "16:9", label: "Landscape (16:9)" },
+    { value: "5:4", label: "Landscape (5:4)" },
+    { value: "3:4", label: "Portrait (3:4)" },
+    { value: "2:3", label: "Portrait (2:3)" },
+    { value: "9:16", label: "Portrait (9:16)" },
+    { value: "4:5", label: "Portrait (4:5)" },
+  ];
+
+  const handleAspectRatioChange = (aspectRatio: string) => {
+    setSelectedAspectRatio(aspectRatio);
+    
+    if (aspectRatio === "") {
+      // Custom - remove aspect ratio
+      updateOption("aspectRatio", undefined);
+      updateOption("crop", undefined);
+    } else {
+      // Set aspect ratio and crop mode
+      updateOption("aspectRatio", aspectRatio);
+      updateOption("crop", "crop");
+    }
+  };
+
   const handleRotate = (degrees: number) => {
     const currentAngle = options.angle || 0;
     const newAngle = (currentAngle + degrees) % 360;
@@ -44,18 +68,46 @@ const CropTab: React.FC<CropTabProps> = ({ options, updateOption }) => {
     <div>
       <Divider sx={{ mb: 3 }} />
 
+      {/* Resize Controls */}
+      <TextField
+        fullWidth
+        label="Width"
+        type="number"
+        value={options.width || ""}
+        onChange={(e) =>
+          updateOption(
+            "width",
+            e.target.value ? Number(e.target.value) : undefined
+          )
+        }
+        sx={{ mb: 2 }}
+      />
+      <TextField
+        fullWidth
+        label="Height"
+        type="number"
+        value={options.height || ""}
+        onChange={(e) =>
+          updateOption(
+            "height",
+            e.target.value ? Number(e.target.value) : undefined
+          )
+        }
+        sx={{ mb: 2 }}
+      />
+
+      {/* Crop Controls */}
       <FormControl fullWidth sx={{ mb: 2 }}>
-        <InputLabel>Crop Mode</InputLabel>
+        <InputLabel>Aspect Ratio</InputLabel>
         <Select
-          value={options.crop || ""}
-          onChange={(e) => updateOption("crop", e.target.value || undefined)}
+          value={selectedAspectRatio}
+          onChange={(e) => handleAspectRatioChange(e.target.value)}
         >
-          <MenuItem value="">None</MenuItem>
-          <MenuItem value="fill">Fill</MenuItem>
-          <MenuItem value="crop">Crop</MenuItem>
-          <MenuItem value="fit">Fit</MenuItem>
-          <MenuItem value="scale">Scale</MenuItem>
-          <MenuItem value="thumb">Thumbnail</MenuItem>
+          {aspectRatios.map((ratio) => (
+            <MenuItem key={ratio.value} value={ratio.value}>
+              {ratio.label}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
 
@@ -74,6 +126,7 @@ const CropTab: React.FC<CropTabProps> = ({ options, updateOption }) => {
           <MenuItem value="west">West</MenuItem>
         </Select>
       </FormControl>
+
       <Box sx={{ mt: 3 }}>
         <Box
           sx={{
@@ -160,4 +213,4 @@ const CropTab: React.FC<CropTabProps> = ({ options, updateOption }) => {
   );
 };
 
-export default CropTab;
+export default CropResizeTab;
