@@ -54,8 +54,16 @@ const ImageTransformModal: React.FC<ImageTransformModalProps> = ({
 
   useEffect(() => {
     if (image && open) {
-      const url = buildTransformationUrl(image.public_id, options);
-      setTransformedUrl(url);
+      console.log("Building URL for image:", image.public_id, "with options:", options);
+      try {
+        const url = buildTransformationUrl(image.public_id, options);
+        console.log("Generated URL:", url);
+        setTransformedUrl(url);
+      } catch (error) {
+        console.error("Error building transformation URL:", error);
+        // Fallback to original image URL
+        setTransformedUrl(image.secure_url);
+      }
     }
   }, [image, options, open]);
 
@@ -71,18 +79,26 @@ const ImageTransformModal: React.FC<ImageTransformModalProps> = ({
   };
 
   const applyPreset = (preset: string) => {
+
     const presets: Record<string, TransformationOptions> = {
       thumbnail: { width: 150, height: 150, crop: "thumb" },
       square: { width: 500, height: 500, crop: "crop", gravity: "center" },
       mobile: { width: 375, height: 667, crop: "fit" },
       web: { width: 1200, height: 800, crop: "fit" },
-      blur: { effect: "blur:1000" },
+      blur: { effect: "blur:500" },
       grayscale: { effect: "grayscale" },
       sepia: { effect: "sepia" },
+      brightness: { effect: "brightness:30" },
+      contrast: { effect: "contrast:50" },
+      saturation: { effect: "saturation:50" },
     };
 
-    if (presets[preset]) {
-      setOptions(presets[preset]);
+    const presetOptions = presets[preset];
+
+    if (presetOptions) {
+      setOptions(presetOptions);
+    } else {
+      console.error("Preset not found:", preset);
     }
   };
 
@@ -129,6 +145,9 @@ const ImageTransformModal: React.FC<ImageTransformModalProps> = ({
                 { key: "blur", label: "Blur", icon: "🌫️" },
                 { key: "grayscale", label: "B&W", icon: "⚫" },
                 { key: "sepia", label: "Sepia", icon: "🟤" },
+                { key: "brightness", label: "Bright", icon: "☀️" },
+                { key: "contrast", label: "Contrast", icon: "🔆" },
+                { key: "saturation", label: "Vivid", icon: "🌈" },
               ].map((preset) => (
                 <Chip
                   key={preset.key}
@@ -321,6 +340,13 @@ const ImageTransformModal: React.FC<ImageTransformModalProps> = ({
                         maxWidth: "100%",
                         maxHeight: 400,
                         objectFit: "contain",
+                      }}
+                      onError={(e) => {
+                        console.error("Image failed to load:", transformedUrl);
+                        // Fallback to original image
+                        if (image) {
+                          e.currentTarget.src = image.secure_url;
+                        }
                       }}
                     />
                   ) : (

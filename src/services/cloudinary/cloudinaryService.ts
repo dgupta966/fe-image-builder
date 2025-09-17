@@ -4,6 +4,14 @@ const apiKey = import.meta.env.VITE_CLOUDINARY_API_KEY || "your-api-key";
 const apiSecret =
   import.meta.env.VITE_CLOUDINARY_API_SECRET || "your-api-secret";
 
+// Debug configuration
+console.log("Cloudinary Configuration Check:", {
+  cloudName: cloudName,
+  hasApiKey: !!apiKey && apiKey !== "your-api-key",
+  hasApiSecret: !!apiSecret && apiSecret !== "your-api-secret",
+  isConfigured: cloudName !== "your-cloud-name" && apiKey !== "your-api-key"
+});
+
 export interface CloudinaryImage {
   public_id: string;
   secure_url: string;
@@ -340,6 +348,17 @@ export const buildTransformationUrl = (
   publicId: string,
   options: TransformationOptions
 ): string => {
+  // Validate inputs
+  if (!publicId) {
+    console.error("No publicId provided");
+    throw new Error("Public ID is required");
+  }
+
+  if (!cloudName || cloudName === "your-cloud-name") {
+    console.error("Cloudinary cloud name not configured:", cloudName);
+    throw new Error("Cloudinary cloud name not configured. Please check your .env file.");
+  }
+
   const transformations: string[] = [];
 
   if (options.width) transformations.push(`w_${options.width}`);
@@ -358,5 +377,20 @@ export const buildTransformationUrl = (
   if (options.dpr) transformations.push(`dpr_${options.dpr}`);
 
   const transformationString = transformations.join(",");
-  return `https://res.cloudinary.com/${cloudName}/image/upload/${transformationString}/${publicId}`;
+  const baseUrl = `https://res.cloudinary.com/${cloudName}/image/upload`;
+
+  console.log("Building transformation URL:", {
+    publicId,
+    options,
+    transformations,
+    transformationString,
+    hasTransformations: transformationString.length > 0
+  });
+
+  // If no transformations, return the original image URL
+  if (transformationString === "") {
+    return `${baseUrl}/${publicId}`;
+  }
+
+  return `${baseUrl}/${transformationString}/${publicId}`;
 };
