@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Box, Typography } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Typography, Skeleton } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import type { CloudinaryResource } from "../../services/cloudinary/cloudinaryService";
 
@@ -15,6 +15,12 @@ const ThumbnailsPanel: React.FC<ThumbnailsPanelProps> = ({
   const theme = useTheme();
   const [currentTransform, setCurrentTransform] = useState<string>("");
   const [isHovered, setIsHovered] = useState(false);
+  const [mainImageLoaded, setMainImageLoaded] = useState(false);
+  const [loadedPresets, setLoadedPresets] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    setMainImageLoaded(false);
+  }, [currentTransform]);
 
   if (!originalImage) return null;
 
@@ -105,6 +111,9 @@ const ThumbnailsPanel: React.FC<ThumbnailsPanelProps> = ({
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
+          {!mainImageLoaded && (
+            <Skeleton variant="rectangular" width="100%" height="100%" />
+          )}
           <img
             src={displayUrl}
             alt="Main image"
@@ -114,6 +123,8 @@ const ThumbnailsPanel: React.FC<ThumbnailsPanelProps> = ({
               objectFit: "cover",
               transition: "opacity 0.3s ease",
             }}
+            onLoad={() => setMainImageLoaded(true)}
+            onError={() => setMainImageLoaded(true)}
           />
           <Box
             sx={{
@@ -176,6 +187,9 @@ const ThumbnailsPanel: React.FC<ThumbnailsPanelProps> = ({
                 justifyContent: "center",
               }}
             >
+              {!loadedPresets.has(preset.name) && (
+                <Skeleton variant="rectangular" width="100%" height="100%" />
+              )}
               <img
                 src={getTransformedUrl(
                   originalImage.secure_url,
@@ -187,6 +201,8 @@ const ThumbnailsPanel: React.FC<ThumbnailsPanelProps> = ({
                   height: "100%",
                   objectFit: "cover",
                 }}
+                onLoad={() => setLoadedPresets(prev => new Set(prev).add(preset.name))}
+                onError={() => setLoadedPresets(prev => new Set(prev).add(preset.name))}
               />
             </Box>
             <Typography
