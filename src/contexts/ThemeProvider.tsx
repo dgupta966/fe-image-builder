@@ -128,14 +128,13 @@ const ThemeContextProvider: React.FC<ThemeContextProviderProps> = ({
       MuiButton: {
         styleOverrides: {
           root: {
-            borderRadius: "25px",
+            borderRadius: "12px",
             textTransform: "none",
             fontWeight: 600,
-            padding: "10px 24px",
+            padding: "7px 24px",
             transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
             "&:hover": {
-              transform: "translateY(-2px)",
-              boxShadow: "0 8px 25px rgba(139, 92, 246, 0.4)",
+               boxShadow: "0 8px 25px rgba(139, 92, 246, 0.4)",
               color: "inherit",
             },
           },
