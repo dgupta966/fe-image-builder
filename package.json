@@ -21,6 +21,7 @@
     "@mui/material": "^7.3.2",
     "@reduxjs/toolkit": "^2.9.0",
     "@types/google.accounts": "^0.0.18",
+    "axios": "^1.12.2",
     "cloudinary": "^2.7.0",
     "google-auth-library": "^10.3.0",
     "googleapis": "^159.0.0",
@@ -32,6 +33,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
+    "@types/axios": "^0.9.36",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^5.0.0",

@@ -95,7 +95,7 @@ export const uploadImage = async (file: File): Promise<UploadResult> => {
       },
     });
 
-    const data = response.data;
+    const data = response.data as CloudinaryImage;
     console.log("Upload successful ✅", data);
 
     return {
@@ -159,7 +159,7 @@ export const uploadFromUrl = async (url: string, publicId?: string): Promise<Upl
       },
     });
 
-    const data = response.data;
+    const data = response.data as CloudinaryImage;
     console.log("Upload from URL successful ✅", data);
 
     return {
@@ -260,7 +260,7 @@ export const editImage = async (
         },
       });
 
-      const data = response.data;
+      const data = response.data as CloudinaryResource;
 
       return {
         success: true,
@@ -310,7 +310,7 @@ export const getImages = async (): Promise<CloudinaryResource[]> => {
       },
     });
 
-    const data = response.data;
+    const data = response.data as CloudinaryResourcesResponse;
 
     if (data.resources && Array.isArray(data.resources)) {
       return data.resources.map((resource: CloudinaryResource) => ({
