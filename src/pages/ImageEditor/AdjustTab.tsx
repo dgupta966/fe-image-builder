@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, Slider } from "@mui/material";
+import { Typography, Slider, Card, CardContent, Box } from "@mui/material";
 import type { TransformationOptions } from "../../services/cloudinary/cloudinaryService";
 
 interface AdjustTabProps {
@@ -12,76 +12,84 @@ interface AdjustTabProps {
 
 const AdjustTab: React.FC<AdjustTabProps> = ({ options, updateOption }) => {
   return (
-    <div>
-      <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
-        Color Adjustments
-      </Typography>
+    <Card variant="outlined" sx={{ borderRadius: 2, boxShadow: 1 }}>
+      <CardContent>
+        {/* Brightness */}
+        <Box sx={{ mb: 3 }}>
+          <Typography gutterBottom fontWeight={500}>
+            Brightness
+          </Typography>
+          <Slider
+            value={options.brightness || 0}
+            onChange={(_, value) => updateOption("brightness", value as number)}
+            min={-100}
+            max={100}
+            step={1}
+            valueLabelDisplay="auto"
+          />
+        </Box>
 
-      <Typography gutterBottom>Brightness</Typography>
-      <Slider
-        value={options.brightness || 0}
-        onChange={(_, value) =>
-          updateOption("brightness", value as number)
-        }
-        min={-100}
-        max={100}
-        step={1}
-        valueLabelDisplay="auto"
-        sx={{ mb: 3 }}
-      />
+        {/* Contrast */}
+        <Box sx={{ mb: 3 }}>
+          <Typography gutterBottom fontWeight={500}>
+            Contrast
+          </Typography>
+          <Slider
+            value={options.contrast || 0}
+            onChange={(_, value) => updateOption("contrast", value as number)}
+            min={-100}
+            max={100}
+            step={1}
+            valueLabelDisplay="auto"
+          />
+        </Box>
 
-      <Typography gutterBottom>Contrast</Typography>
-      <Slider
-        value={options.contrast || 0}
-        onChange={(_, value) =>
-          updateOption("contrast", value as number)
-        }
-        min={-100}
-        max={100}
-        step={1}
-        valueLabelDisplay="auto"
-        sx={{ mb: 3 }}
-      />
+        {/* Saturation */}
+        <Box sx={{ mb: 3 }}>
+          <Typography gutterBottom fontWeight={500}>
+            Saturation
+          </Typography>
+          <Slider
+            value={options.saturation || 0}
+            onChange={(_, value) => updateOption("saturation", value as number)}
+            min={-100}
+            max={100}
+            step={1}
+            valueLabelDisplay="auto"
+          />
+        </Box>
 
-      <Typography gutterBottom>Saturation</Typography>
-      <Slider
-        value={options.saturation || 0}
-        onChange={(_, value) =>
-          updateOption("saturation", value as number)
-        }
-        min={-100}
-        max={100}
-        step={1}
-        valueLabelDisplay="auto"
-        sx={{ mb: 3 }}
-      />
+        {/* Exposure */}
+        <Box sx={{ mb: 3 }}>
+          <Typography gutterBottom fontWeight={500}>
+            Exposure
+          </Typography>
+          <Slider
+            value={options.exposure || 0}
+            onChange={(_, value) => updateOption("exposure", value as number)}
+            min={-100}
+            max={100}
+            step={1}
+            valueLabelDisplay="auto"
+          />
+        </Box>
 
-      <Typography gutterBottom>Exposure</Typography>
-      <Slider
-        value={options.exposure || 0}
-        onChange={(_, value) =>
-          updateOption("exposure", value as number)
-        }
-        min={-100}
-        max={100}
-        step={1}
-        valueLabelDisplay="auto"
-        sx={{ mb: 3 }}
-      />
-
-      <Typography gutterBottom>Gamma</Typography>
-      <Slider
-        value={options.gamma || 0}
-        onChange={(_, value) =>
-          updateOption("gamma", value as number)
-        }
-        min={-50}
-        max={50}
-        step={1}
-        valueLabelDisplay="auto"
-        sx={{ mb: 2 }}
-      />
-    </div>
+        {/* Gamma */}
+        <Box>
+          <Typography gutterBottom fontWeight={500}>
+            Gamma
+          </Typography>
+          <Slider
+            value={options.gamma || 0}
+            onChange={(_, value) => updateOption("gamma", value as number)}
+            min={-50}
+            max={50}
+            step={1}
+            valueLabelDisplay="auto"
+          />
+        </Box>
+      </CardContent>
+    </Card>
   );
 };
 

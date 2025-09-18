@@ -1,5 +1,12 @@
 import React from "react";
-import { FormControlLabel, Switch, TextField, Typography } from "@mui/material";
+import {
+  TextField,
+  Card,
+  CardContent,
+  Switch,
+  FormControlLabel,
+  Box,
+} from "@mui/material";
 import type { TransformationOptions } from "../../services/cloudinary/cloudinaryService";
 
 interface OptimizeTabProps {
@@ -12,65 +19,69 @@ interface OptimizeTabProps {
 
 const OptimizeTab: React.FC<OptimizeTabProps> = ({ options, updateOption }) => {
   return (
-    <div>
-      <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
-        Optimization
-      </Typography>
-
-      <FormControlLabel
-        control={
-          <Switch
-            checked={options.auto_optimize || false}
-            onChange={(e) =>
-              updateOption("auto_optimize", e.target.checked)
+    <Card variant="outlined" sx={{ borderRadius: 2, boxShadow: 1 }}>
+      <CardContent>
+        {/* Auto Optimize */}
+        <Box sx={{ mb: 2 }}>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={options.auto_optimize || false}
+                onChange={(e) =>
+                  updateOption("auto_optimize", e.target.checked)
+                }
+                color="primary"
+              />
             }
+            label="Auto Optimize"
           />
-        }
-        label="Auto Optimize"
-        sx={{ mb: 2 }}
-      />
+        </Box>
 
-      <FormControlLabel
-        control={
-          <Switch
-            checked={options.auto_format || false}
-            onChange={(e) =>
-              updateOption("auto_format", e.target.checked)
+        {/* Auto Format */}
+        <Box sx={{ mb: 2 }}>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={options.auto_format || false}
+                onChange={(e) => updateOption("auto_format", e.target.checked)}
+                color="primary"
+              />
             }
+            label="Auto Format"
           />
-        }
-        label="Auto Format"
-        sx={{ mb: 2 }}
-      />
+        </Box>
 
-      <FormControlLabel
-        control={
-          <Switch
-            checked={options.progressive || false}
-            onChange={(e) =>
-              updateOption("progressive", e.target.checked)
+        {/* Progressive JPEG */}
+        <Box sx={{ mb: 2 }}>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={options.progressive || false}
+                onChange={(e) => updateOption("progressive", e.target.checked)}
+                color="primary"
+              />
             }
+            label="Progressive JPEG"
           />
-        }
-        label="Progressive JPEG"
-        sx={{ mb: 2 }}
-      />
+        </Box>
 
-      <TextField
-        fullWidth
-        label="Device Pixel Ratio"
-        type="number"
-        value={options.dpr || ""}
-        onChange={(e) =>
-          updateOption(
-            "dpr",
-            e.target.value ? Number(e.target.value) : undefined
-          )
-        }
-        inputProps={{ min: 0.5, max: 3, step: 0.1 }}
-        sx={{ mb: 2 }}
-      />
-    </div>
+        {/* Device Pixel Ratio */}
+        <TextField
+          fullWidth
+          label="Device Pixel Ratio"
+          type="number"
+          size="small"
+          value={options.dpr || ""}
+          onChange={(e) =>
+            updateOption(
+              "dpr",
+              e.target.value ? Number(e.target.value) : undefined
+            )
+          }
+          inputProps={{ min: 0.5, max: 3, step: 0.1 }}
+        />
+      </CardContent>
+    </Card>
   );
 };
 
