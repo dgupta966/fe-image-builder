@@ -1,6 +1,24 @@
 import React from "react";
-import { TextField, FormControl, InputLabel, Select, MenuItem, Box, IconButton, Divider, Tooltip } from "@mui/material";
-import { RotateCw, RotateCcw, FlipHorizontal, FlipVertical } from "lucide-react";
+import {
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Box,
+  IconButton,
+  Tooltip,
+  Typography,
+  Card,
+  CardContent,
+  Stack,
+} from "@mui/material";
+import {
+  RotateCw,
+  RotateCcw,
+  FlipHorizontal,
+  FlipVertical,
+} from "lucide-react";
 import type { TransformationOptions } from "../../services/cloudinary/cloudinaryService";
 
 interface CropResizeTabProps {
@@ -11,11 +29,13 @@ interface CropResizeTabProps {
   ) => void;
 }
 
-const CropResizeTab: React.FC<CropResizeTabProps> = ({ options, updateOption }) => {
+const CropResizeTab: React.FC<CropResizeTabProps> = ({
+  options,
+  updateOption,
+}) => {
   const [selectedAspectRatio, setSelectedAspectRatio] = React.useState("");
 
   React.useEffect(() => {
-    // Sync selectedAspectRatio with options.aspectRatio
     if (options.aspectRatio) {
       setSelectedAspectRatio(options.aspectRatio);
     } else {
@@ -38,13 +58,10 @@ const CropResizeTab: React.FC<CropResizeTabProps> = ({ options, updateOption }) 
 
   const handleAspectRatioChange = (aspectRatio: string) => {
     setSelectedAspectRatio(aspectRatio);
-    
     if (aspectRatio === "") {
-      // Custom - remove aspect ratio
       updateOption("aspectRatio", undefined);
       updateOption("crop", undefined);
     } else {
-      // Set aspect ratio and crop mode
       updateOption("aspectRatio", aspectRatio);
       updateOption("crop", "crop");
     }
@@ -65,92 +82,125 @@ const CropResizeTab: React.FC<CropResizeTabProps> = ({ options, updateOption }) 
   };
 
   return (
-    <div>
-      <Divider sx={{ mb: 3 }} />
+    <Card variant="outlined" sx={{ borderRadius: 3, boxShadow: "sm" }}>
+      <CardContent sx={{ p: 3 }}>
+        {/* Header */}
 
-      {/* Resize Controls */}
-      <TextField
-        fullWidth
-        label="Width"
-        type="number"
-        value={options.width || ""}
-        onChange={(e) =>
-          updateOption(
-            "width",
-            e.target.value ? Number(e.target.value) : undefined
-          )
-        }
-        sx={{ mb: 2 }}
-      />
-      <TextField
-        fullWidth
-        label="Height"
-        type="number"
-        value={options.height || ""}
-        onChange={(e) =>
-          updateOption(
-            "height",
-            e.target.value ? Number(e.target.value) : undefined
-          )
-        }
-        sx={{ mb: 2 }}
-      />
-
-      {/* Crop Controls */}
-      <FormControl fullWidth sx={{ mb: 2 }}>
-        <InputLabel>Aspect Ratio</InputLabel>
-        <Select
-          value={selectedAspectRatio}
-          onChange={(e) => handleAspectRatioChange(e.target.value)}
+        {/* Resize Section */}
+        <Typography
+          variant="subtitle2"
+          fontWeight={500}
+          sx={{ mb: 1, color: "text.secondary" }}
         >
-          {aspectRatios.map((ratio) => (
-            <MenuItem key={ratio.value} value={ratio.value}>
-              {ratio.label}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+          Resize
+        </Typography>
+        <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
+          <TextField
+            fullWidth
+            label="Width"
+            type="number"
+            size="small"
+            value={options.width || ""}
+            onChange={(e) =>
+              updateOption(
+                "width",
+                e.target.value ? Number(e.target.value) : undefined
+              )
+            }
+          />
+          <TextField
+            fullWidth
+            label="Height"
+            type="number"
+            size="small"
+            value={options.height || ""}
+            onChange={(e) =>
+              updateOption(
+                "height",
+                e.target.value ? Number(e.target.value) : undefined
+              )
+            }
+          />
+        </Stack>
 
-      <FormControl fullWidth sx={{ mb: 2 }}>
-        <InputLabel>Gravity</InputLabel>
-        <Select
-          value={options.gravity || ""}
-          onChange={(e) => updateOption("gravity", e.target.value || undefined)}
+        {/* Crop Section */}
+        <Typography
+          variant="subtitle2"
+          fontWeight={500}
+          sx={{ mb: 1, color: "text.secondary" }}
         >
-          <MenuItem value="">Auto</MenuItem>
-          <MenuItem value="face">Face</MenuItem>
-          <MenuItem value="center">Center</MenuItem>
-          <MenuItem value="north">North</MenuItem>
-          <MenuItem value="south">South</MenuItem>
-          <MenuItem value="east">East</MenuItem>
-          <MenuItem value="west">West</MenuItem>
-        </Select>
-      </FormControl>
+          Crop
+        </Typography>
+        <Stack spacing={2} sx={{ mb: 3 }}>
+          <FormControl size="small" fullWidth>
+            <InputLabel>Aspect Ratio</InputLabel>
+            <Select
+              value={selectedAspectRatio}
+              onChange={(e) => handleAspectRatioChange(e.target.value)}
+              label="Aspect Ratio"
+            >
+              {aspectRatios.map((ratio) => (
+                <MenuItem key={ratio.value} value={ratio.value}>
+                  {ratio.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-      <Box sx={{ mt: 3 }}>
+          <FormControl size="small" fullWidth>
+            <InputLabel>Gravity</InputLabel>
+            <Select
+              value={options.gravity || ""}
+              onChange={(e) =>
+                updateOption("gravity", e.target.value || undefined)
+              }
+              label="Gravity"
+            >
+              <MenuItem value="">Auto</MenuItem>
+              <MenuItem value="face">Face</MenuItem>
+              <MenuItem value="center">Center</MenuItem>
+              <MenuItem value="north">North</MenuItem>
+              <MenuItem value="south">South</MenuItem>
+              <MenuItem value="east">East</MenuItem>
+              <MenuItem value="west">West</MenuItem>
+            </Select>
+          </FormControl>
+        </Stack>
+
+        {/* Transform Controls */}
+        <Typography
+          variant="subtitle2"
+          fontWeight={500}
+          sx={{ mb: 1, color: "text.secondary" }}
+        >
+          Transform
+        </Typography>
         <Box
           sx={{
             display: "flex",
-            gap: 1,
-            alignItems: "center",
-            justifyContent: "space-around",
+            justifyContent: "center",
+            gap: 2,
+            flexWrap: "wrap",
+            mt: 1,
           }}
         >
           <Tooltip title="Rotate Left (-90°)">
             <IconButton
               onClick={() => handleRotate(-90)}
-              size="small"
+              size="medium"
               sx={{
                 bgcolor:
                   options.angle &&
                   (options.angle % 360 === 270 || options.angle % 360 === -90)
                     ? "primary.main"
-                    : "transparent",
+                    : "background.paper",
                 color:
                   options.angle &&
                   (options.angle % 360 === 270 || options.angle % 360 === -90)
                     ? "white"
-                    : "inherit",
+                    : "text.primary",
+                border: "1px solid",
+                borderColor: "divider",
                 "&:hover": { bgcolor: "primary.main", color: "white" },
               }}
             >
@@ -161,18 +211,20 @@ const CropResizeTab: React.FC<CropResizeTabProps> = ({ options, updateOption }) 
           <Tooltip title="Rotate Right (+90°)">
             <IconButton
               onClick={() => handleRotate(90)}
-              size="small"
+              size="medium"
               sx={{
                 bgcolor:
                   options.angle &&
                   (options.angle % 360 === 90 || options.angle % 360 === -270)
                     ? "primary.main"
-                    : "transparent",
+                    : "background.paper",
                 color:
                   options.angle &&
                   (options.angle % 360 === 90 || options.angle % 360 === -270)
                     ? "white"
-                    : "inherit",
+                    : "text.primary",
+                border: "1px solid",
+                borderColor: "divider",
                 "&:hover": { bgcolor: "primary.main", color: "white" },
               }}
             >
@@ -183,10 +235,12 @@ const CropResizeTab: React.FC<CropResizeTabProps> = ({ options, updateOption }) 
           <Tooltip title="Flip Horizontal">
             <IconButton
               onClick={() => handleFlip("horizontal")}
-              size="small"
+              size="medium"
               sx={{
-                bgcolor: options.flip ? "primary.main" : "transparent",
-                color: options.flip ? "white" : "inherit",
+                bgcolor: options.flip ? "primary.main" : "background.paper",
+                color: options.flip ? "white" : "text.primary",
+                border: "1px solid",
+                borderColor: "divider",
                 "&:hover": { bgcolor: "primary.main", color: "white" },
               }}
             >
@@ -197,10 +251,12 @@ const CropResizeTab: React.FC<CropResizeTabProps> = ({ options, updateOption }) 
           <Tooltip title="Flip Vertical">
             <IconButton
               onClick={() => handleFlip("vertical")}
-              size="small"
+              size="medium"
               sx={{
-                bgcolor: options.flop ? "primary.main" : "transparent",
-                color: options.flop ? "white" : "inherit",
+                bgcolor: options.flop ? "primary.main" : "background.paper",
+                color: options.flop ? "white" : "text.primary",
+                border: "1px solid",
+                borderColor: "divider",
                 "&:hover": { bgcolor: "primary.main", color: "white" },
               }}
             >
@@ -208,8 +264,8 @@ const CropResizeTab: React.FC<CropResizeTabProps> = ({ options, updateOption }) 
             </IconButton>
           </Tooltip>
         </Box>
-      </Box>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 
