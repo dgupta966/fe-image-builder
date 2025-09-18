@@ -1,14 +1,56 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import type { CloudinaryResource } from "../../services/cloudinary/cloudinaryService";
 
 interface ThumbnailsPanelProps {
-  image: CloudinaryResource;
+  originalImage: CloudinaryResource;
+  onImageChange?: (transformedUrl: string) => void;
 }
 
-const ThumbnailsPanel: React.FC<ThumbnailsPanelProps> = ({ image }) => {
+const ThumbnailsPanel: React.FC<ThumbnailsPanelProps> = ({
+  originalImage,
+  onImageChange,
+}) => {
   const theme = useTheme();
+  const [currentTransform, setCurrentTransform] = useState<string>("");
+  const [isHovered, setIsHovered] = useState(false);
+
+  if (!originalImage) return null;
+
+  const presets = [
+    { name: "Original", transform: "" },
+    { name: "Sepia", transform: "e_sepia" },
+    { name: "Blurry", transform: "e_blur:500" },
+    { name: "Brightness", transform: "e_brightness:50" },
+    { name: "Contrast", transform: "e_contrast:50" },
+    { name: "Saturation", transform: "e_saturation:50" },
+
+    { name: "Sharp", transform: "e_sharpen:100" },
+    { name: "Soft", transform: "e_blur:100" },
+    { name: "Vivid", transform: "e_vibrance:50/e_saturation:30" },
+    { name: "Dramatic", transform: "e_contrast:70/e_brightness:-10" },
+  ];
+
+  const getTransformedUrl = (baseUrl: string, transform: string) => {
+    if (!transform) return baseUrl;
+    return baseUrl.replace("/upload/", `/upload/${transform}/`);
+  };
+
+  const handlePresetClick = (transform: string) => {
+    setCurrentTransform(transform);
+    const transformedUrl = getTransformedUrl(
+      originalImage.secure_url,
+      transform
+    );
+    onImageChange?.(transformedUrl);
+  };
+
+  const currentImageUrl = getTransformedUrl(
+    originalImage.secure_url,
+    currentTransform
+  );
+  const displayUrl = isHovered ? originalImage.secure_url : currentImageUrl;
 
   return (
     <Box
@@ -18,9 +60,8 @@ const ThumbnailsPanel: React.FC<ThumbnailsPanelProps> = ({ image }) => {
         minWidth: 200,
         height: "100%",
         overflow: "hidden",
-        bgcolor: theme.palette.mode === "dark" ? "#0b1115" : "#fafafa",
-        borderLeft: "1px solid",
-        borderColor: "divider",
+        bgcolor: theme.palette.background.paper,
+
         display: "flex",
         flexDirection: "column",
         "@media (max-width: 1200px)": {
@@ -46,38 +87,119 @@ const ThumbnailsPanel: React.FC<ThumbnailsPanelProps> = ({ image }) => {
           Thumbnails
         </Typography>
       </Box>
+
+      <Box sx={{ p: 2, pb: 1 }}>
+        <Box
+          sx={{
+            width: "100%",
+            height: 180,
+            borderRadius: 1,
+            overflow: "hidden",
+            bgcolor: theme.palette.background.paper,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            position: "relative",
+          }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <img
+            src={displayUrl}
+            alt="Main image"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              transition: "opacity 0.3s ease",
+            }}
+          />
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: 8,
+              left: 8,
+              bgcolor: "rgba(0,0,0,0.7)",
+              color: "white",
+              px: 1,
+              py: 0.5,
+              borderRadius: 0.5,
+              fontSize: "0.75rem",
+            }}
+          >
+            {isHovered ? "Original" : "Current"}
+          </Box>
+        </Box>
+      </Box>
+
       <Box
         sx={{
           overflow: "auto",
           p: 2,
+          pt: 1,
           display: "grid",
-          gridTemplateColumns: "1fr",
-          gap: 12,
+          gridTemplateColumns: "1fr 1fr",
+          gap: 2,
         }}
       >
-        {[1, 2].map((i) => (
+        {presets.map((preset) => (
           <Box
-            key={i}
+            key={preset.name}
             sx={{
-              width: "100%",
-              height: 120,
-              borderRadius: 1,
-              overflow: "hidden",
-              bgcolor: theme.palette.mode === "dark" ? "#071018" : "#fff",
               display: "flex",
+              flexDirection: "column",
               alignItems: "center",
-              justifyContent: "center",
+              cursor: "pointer",
+              border:
+                currentTransform === preset.transform
+                  ? "2px solid #1976d2"
+                  : "1px solid transparent",
+              borderRadius: 1,
+              p: 1,
+              transition: "border-color 0.2s ease",
+              "&:hover": {
+                borderColor: "#1976d2",
+              },
             }}
+            onClick={() => handlePresetClick(preset.transform)}
           >
-            <img
-              src={image.secure_url}
-              alt={`thumb-${i}`}
-              style={{
+            <Box
+              sx={{
                 width: "100%",
-                height: "100%",
-                objectFit: "cover",
+                height: 60,
+                borderRadius: 1,
+                overflow: "hidden",
+                bgcolor: theme.palette.mode === "dark" ? "#071018" : "#fff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
-            />
+            >
+              <img
+                src={getTransformedUrl(
+                  originalImage.secure_url,
+                  preset.transform
+                )}
+                alt={preset.name}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            </Box>
+            <Typography
+              variant="caption"
+              sx={{
+                mt: 0.5,
+                textAlign: "center",
+                fontSize: "0.7rem",
+                color: theme.palette.text.secondary,
+              }}
+            >
+              {preset.name}
+            </Typography>
           </Box>
         ))}
       </Box>

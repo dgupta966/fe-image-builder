@@ -165,7 +165,7 @@ const ImageEditorPage: React.FC = () => {
     navigate("/cloudinary");
   };
 
-  const hasTransformations = Object.keys(options).length > 0;
+  const hasTransformations = Object.keys(options).length > 0 || Boolean(transformedUrl && image && transformedUrl !== image.secure_url && transformedUrl !== "");
 
   if (loading) {
     return (
@@ -252,7 +252,12 @@ const ImageEditorPage: React.FC = () => {
             onReset={resetTransformations}
           />
 
-          <ThumbnailsPanel image={image} />
+          {image && (
+            <ThumbnailsPanel 
+              originalImage={image} 
+              onImageChange={setTransformedUrl}
+            />
+          )}
         </MainContent>
       </ContentContainer>
     </Box>
