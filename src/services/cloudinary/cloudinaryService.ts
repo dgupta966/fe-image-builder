@@ -304,7 +304,7 @@ export const getImages = async (): Promise<CloudinaryResource[]> => {
       throw new Error("Cloudinary API secret not configured");
     }
 
-    const response = await axios.get(`/api/cloudinary/resources/image`, {
+    const response = await axios.get(`https://res.cloudinary.com/api/cloudinary/resources/image`, {
       headers: {
         Authorization: `Basic ${btoa(`${apiKey}:${apiSecret}`)}`,
       },
