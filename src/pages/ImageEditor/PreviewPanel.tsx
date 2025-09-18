@@ -61,110 +61,97 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
         },
       }}
     >
-      <Box
-        sx={{
-          flex: 1,
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          bgcolor: theme.palette.background.paper,
-          borderRadius: 2,
-          p: 1,
-        }}
-      >
-        {transformedUrl ? (
-          <Box
-            sx={{
-              maxWidth: "100%",
-              height: "100%",
-               maxHeight: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              overflow: "hidden",
-              padding: 1,
-              bgcolor: theme.palette.background.default,
-              borderRadius: 2,
-              position: "relative",
-              aspectRatio: image ? `${image.width}/${image.height}` : "auto",
+      {transformedUrl ? (
+        <Box
+          sx={{
+            maxWidth: "100%",
+            height: "100%",
+            maxHeight: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            overflow: "hidden",
+            padding: 1,
+            bgcolor: theme.palette.background.default,
+            borderRadius: 2,
+            position: "relative",
+            aspectRatio: image ? `${image.width}/${image.height}` : "auto",
 
-              // Responsive adjustments for different screen sizes
-              "@media (max-width: 1200px)": {
-                aspectRatio: "auto",
-                minHeight: "300px",
-              },
+            // Responsive adjustments for different screen sizes
+            "@media (max-width: 1200px)": {
+              aspectRatio: "auto",
+              minHeight: "300px",
+            },
 
-              "@media (max-width: 768px)": {
-                aspectRatio: "auto",
-                minHeight: "250px",
-                padding: 0.5,
-              },
+            "@media (max-width: 768px)": {
+              aspectRatio: "auto",
+              minHeight: "250px",
+              padding: 0.5,
+            },
+          }}
+        >
+          {!imageLoaded && !imageError && (
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                zIndex: 1,
+              }}
+            >
+              <Typography variant="body2" color="text.secondary">
+                Loading preview...
+              </Typography>
+            </Box>
+          )}
+
+          <PreviewImage
+            key={transformedUrl}
+            src={transformedUrl}
+            alt="Transformed preview"
+            theme={theme}
+            onLoad={() => {
+              setImageLoaded(true);
+              setImageError(false);
             }}
-          >
-            {!imageLoaded && !imageError && (
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  zIndex: 1,
-                }}
-              >
-                <Typography variant="body2" color="text.secondary">
-                  Loading preview...
-                </Typography>
-              </Box>
-            )}
+            onError={(e) => {
+              console.error("Image failed to load:", transformedUrl);
+              setImageError(true);
+              setImageLoaded(false);
+              if (image) {
+                e.currentTarget.src = image.secure_url;
+              }
+            }}
+            style={{
+              opacity: imageLoaded ? 1 : 0.7,
+              filter: imageError ? "blur(2px)" : "none",
+            }}
+          />
 
-            <PreviewImage
-              key={transformedUrl}
-              src={transformedUrl}
-              alt="Transformed preview"
-              theme={theme}
-              onLoad={() => {
-                setImageLoaded(true);
-                setImageError(false);
+          {imageError && (
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: 8,
+                left: 8,
+                bgcolor: theme.palette.error.main,
+                color: theme.palette.error.contrastText,
+                px: 1,
+                py: 0.5,
+                borderRadius: 1,
+                fontSize: "0.75rem",
               }}
-              onError={(e) => {
-                console.error("Image failed to load:", transformedUrl);
-                setImageError(true);
-                setImageLoaded(false);
-                if (image) {
-                  e.currentTarget.src = image.secure_url;
-                }
-              }}
-              style={{
-                opacity: imageLoaded ? 1 : 0.7,
-                filter: imageError ? 'blur(2px)' : 'none',
-              }}
-            />
-
-            {imageError && (
-              <Box
-                sx={{
-                  position: "absolute",
-                  bottom: 8,
-                  left: 8,
-                  bgcolor: theme.palette.error.main,
-                  color: theme.palette.error.contrastText,
-                  px: 1,
-                  py: 0.5,
-                  borderRadius: 1,
-                  fontSize: "0.75rem",
-                }}
-              >
-                Preview failed
-              </Box>
-            )}
-          </Box>
-        ) : (
-          <LoadingPlaceholder theme={theme}>
-            <Typography>Select transformations to see preview</Typography>
-          </LoadingPlaceholder>
-        )}
-      </Box>
+            >
+              Preview failed
+            </Box>
+          )}
+        </Box>
+      ) : (
+        <LoadingPlaceholder theme={theme}>
+          <Typography>Select transformations to see preview</Typography>
+        </LoadingPlaceholder>
+      )}
     </StyledPreviewPanel>
   );
 };
