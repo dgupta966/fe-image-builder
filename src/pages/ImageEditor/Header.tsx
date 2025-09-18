@@ -1,10 +1,11 @@
 import React from "react";
-import { Typography, Box, Button, IconButton } from "@mui/material";
+import { Typography, Box, Button, IconButton, CircularProgress } from "@mui/material";
 import { ArrowBack, Refresh, Save } from "@mui/icons-material";
 
 interface HeaderProps {
   imageName: string;
   hasTransformations: boolean;
+  saving: boolean;
   onBack: () => void;
   onReset: () => void;
   onSave: () => void;
@@ -12,6 +13,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({
   hasTransformations,
+  saving,
   onBack,
   onReset,
   onSave,
@@ -46,12 +48,12 @@ const Header: React.FC<HeaderProps> = ({
           Reset
         </Button>
         <Button
-          startIcon={<Save />}
+          startIcon={saving ? <CircularProgress size={20} color="inherit" /> : <Save />}
           onClick={onSave}
           variant="contained"
-          disabled={!hasTransformations}
+          disabled={!hasTransformations || saving}
         >
-          Copy URL
+          {saving ? "Saving..." : "Save Image"}
         </Button>
       </Box>
     </Box>

@@ -6,6 +6,7 @@ import {
   buildTransformationUrl,
   type TransformationOptions,
   type CloudinaryResource,
+  uploadFromUrl,
 } from "../../services/cloudinary/cloudinaryService";
 import { ContentContainer, MainContent } from "../../components/cloudinary/ImageTransformModal.styled";
 import Header from "./Header";
@@ -34,6 +35,7 @@ const ImageEditorPage: React.FC = () => {
   const [activePreset, setActivePreset] = useState<string | null>(null);
   const [image, setImage] = useState<CloudinaryResource | null>(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   // Get image data from URL parameters
   useEffect(() => {
@@ -138,11 +140,25 @@ const ImageEditorPage: React.FC = () => {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!image || !transformedUrl) return;
-    navigator.clipboard.writeText(transformedUrl);
-    // Navigate back to cloudinary page
-    navigate("/cloudinary");
+    setSaving(true);
+    try {
+      const result = await uploadFromUrl(transformedUrl);
+      if (result.success) {
+        console.log("Image saved to Cloudinary:", result.data);
+        // Navigate back to cloudinary page
+        navigate("/cloudinary");
+      } else {
+        console.error("Failed to save image:", result.error);
+        alert("Failed to save image: " + result.error);
+      }
+    } catch (error) {
+      console.error("Error saving image:", error);
+      alert("Error saving image");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleBack = () => {
@@ -177,6 +193,7 @@ const ImageEditorPage: React.FC = () => {
       <Header
         imageName={image.public_id.split("/").pop() || ""}
         hasTransformations={hasTransformations}
+        saving={saving}
         onBack={handleBack}
         onReset={resetTransformations}
         onSave={handleSave}

@@ -122,6 +122,70 @@ export const uploadImage = async (file: File): Promise<UploadResult> => {
   }
 };
 
+export const uploadFromUrl = async (url: string, publicId?: string): Promise<UploadResult> => {
+  try {
+    if (!url) {
+      throw new Error("No URL provided");
+    }
+
+    if (!cloudName) {
+      throw new Error("Cloudinary cloud name not configured");
+    }
+
+    const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+    if (!uploadPreset) {
+      throw new Error("Upload preset not configured");
+    }
+
+    // ✅ Prepare form data
+    const formData = new FormData();
+    formData.append("file", url);
+    formData.append("upload_preset", uploadPreset);
+    if (publicId) {
+      formData.append("public_id", publicId);
+    }
+
+    console.log("Uploading from URL to Cloudinary...", {
+      cloudName,
+      uploadPreset,
+      url,
+      publicId,
+    });
+
+    // ✅ Send upload request
+    const response = await axios.post(`/api/cloudinary/image/upload`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    const data = response.data;
+    console.log("Upload from URL successful ✅", data);
+
+    return {
+      success: true,
+      data: {
+        public_id: data.public_id,
+        secure_url: data.secure_url,
+        url: data.url,
+        width: data.width,
+        height: data.height,
+        format: data.format,
+        bytes: data.bytes,
+        created_at: data.created_at,
+      },
+    };
+  } catch (error) {
+    console.error("Upload from URL error:", error);
+
+    if (error instanceof Error) {
+      return { success: false, error: error.message };
+    }
+
+    return { success: false, error: "Unknown upload from URL error" };
+  }
+};
+
 export const deleteImage = async (publicId: string): Promise<DeleteResult> => {
   try {
     console.log("Attempting to delete image:", publicId);
