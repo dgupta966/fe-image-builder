@@ -89,7 +89,7 @@ export const uploadImage = async (file: File): Promise<UploadResult> => {
     });
 
     // ✅ Send upload request
-    const response = await axios.post(`/api/cloudinary/image/upload`, formData, {
+    const response = await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -153,7 +153,7 @@ export const uploadFromUrl = async (url: string, publicId?: string): Promise<Upl
     });
 
     // ✅ Send upload request
-    const response = await axios.post(`/api/cloudinary/image/upload`, formData, {
+    const response = await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
