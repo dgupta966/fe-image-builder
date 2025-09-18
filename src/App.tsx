@@ -3,9 +3,10 @@ import {
   Routes,
   Route,
   useLocation,
+  useNavigate,
 } from "react-router-dom";
-import { CssBaseline, Box } from "@mui/material";
-import { useState } from "react";
+import { CssBaseline, Box, Typography } from "@mui/material";
+import  { useState, useEffect } from "react";
 
 import { AuthProvider } from "./contexts/AuthContext.tsx";
 import ThemeContextProvider from "./contexts/ThemeProvider.tsx";
@@ -26,13 +27,21 @@ import { useSidebar } from "./contexts/useSidebar";
 
 function AppContent() {
   const location = useLocation();
-  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const { isAuthenticated, isLoading } = useAuth();
   const { collapsed } = useSidebar();
 
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const isHomePage = location.pathname === "/";
   const isLoginPage = location.pathname === "/login";
+
+  // Redirect authenticated users to dashboard if they're on home or login page
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && (isHomePage || isLoginPage)) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [isAuthenticated, isLoading, isHomePage, isLoginPage, navigate]);
 
   const handleMobileMenuToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -43,18 +52,36 @@ function AppContent() {
   };
 
   if (isHomePage || isLoginPage || !isAuthenticated) {
+    // Show loading spinner while checking authentication
+    if (isLoading) {
+      return (
+        <Box
+          sx={{
+            minHeight: "100vh",
+            bgcolor: "background.default",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography>Loading...</Typography>
+        </Box>
+      );
+    }
+
     // Home page, login page, or unauthenticated users - layout without sidebar and header
     return (
       <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/optimizer" element={<ImageOptimizerPage />} />
-          <Route path="/google-drive" element={<GoogleDrivePage />} />
-          <Route path="/thumbnail-creator" element={<ThumbnailCreatorPage />} />
-          <Route path="/cloudinary" element={<CloudinaryPage />} />
+          {/* Redirect authenticated routes to home for unauthenticated users */}
+          <Route path="/dashboard" element={<HomePage />} />
+          <Route path="/profile" element={<HomePage />} />
+          <Route path="/optimizer" element={<HomePage />} />
+          <Route path="/google-drive" element={<HomePage />} />
+          <Route path="/thumbnail-creator" element={<HomePage />} />
+          <Route path="/cloudinary" element={<HomePage />} />
         </Routes>
       </Box>
     );

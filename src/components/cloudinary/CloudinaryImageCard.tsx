@@ -8,13 +8,7 @@ import {
   Typography,
   Chip,
 } from "@mui/material";
-import {
-  Delete,
-  Edit,
-  Download,
-  Transform,
-  ContentCopy,
-} from "@mui/icons-material";
+import { Delete, Download, Transform, ContentCopy } from "@mui/icons-material";
 import {
   getOptimizedUrl,
   type CloudinaryResource,
@@ -22,7 +16,7 @@ import {
 
 interface CloudinaryImageCardProps {
   image: CloudinaryResource;
-  onEdit: (image: CloudinaryResource) => void;
+  // onEdit: (image: CloudinaryResource) => void;
   onDelete: (image: CloudinaryResource) => void;
   onSave: (image: CloudinaryResource) => void;
   onTransform: (image: CloudinaryResource) => void;
@@ -31,7 +25,7 @@ interface CloudinaryImageCardProps {
 
 const CloudinaryImageCard: React.FC<CloudinaryImageCardProps> = ({
   image,
-  onEdit,
+  // onEdit,
   onDelete,
   onSave,
   onTransform,
@@ -93,9 +87,9 @@ const CloudinaryImageCard: React.FC<CloudinaryImageCardProps> = ({
           >
             <Transform />
           </IconButton>
-          <IconButton size="small" onClick={() => onEdit(image)} title="Edit">
+          {/* <IconButton size="small" onClick={() => onEdit(image)} title="Edit">
             <Edit />
-          </IconButton>
+          </IconButton> */}
           <IconButton
             size="small"
             onClick={() => onSave(image)}

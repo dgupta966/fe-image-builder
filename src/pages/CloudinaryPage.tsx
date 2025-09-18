@@ -3,16 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { Typography, Box, Snackbar, Alert } from "@mui/material";
 import {
   deleteImage,
-  editImage,
+  // editImage,
   saveImage,
   getImages,
   type CloudinaryResource,
   type DeleteResult,
-  type EditResult,
+  // type EditResult,
 } from "../services/cloudinary/cloudinaryService";
 import UploadSection from "../components/cloudinary/UploadSection";
 import ImageGrid from "../components/cloudinary/ImageGrid";
-import EditImageDialog from "../components/cloudinary/EditImageDialog";
+// import EditImageDialog from "../components/cloudinary/EditImageDialog";
 
 const CloudinaryPage: React.FC = () => {
   const navigate = useNavigate();
@@ -20,11 +20,11 @@ const CloudinaryPage: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isLoadingImages, setIsLoadingImages] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [selectedImage, setSelectedImage] = useState<CloudinaryResource | null>(
-    null
-  );
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [newImageName, setNewImageName] = useState("");
+  // const [selectedImage, setSelectedImage] = useState<CloudinaryResource | null>(
+  //   null
+  // );
+  // const [editDialogOpen, setEditDialogOpen] = useState(false);
+  // const [newImageName, setNewImageName] = useState("");
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -77,43 +77,43 @@ const CloudinaryPage: React.FC = () => {
     }
   };
 
-  const handleEdit = (image: CloudinaryResource) => {
-    setSelectedImage(image);
-    setNewImageName(image.public_id.split("/").pop() || "");
-    setEditDialogOpen(true);
-  };
+  // const handleEdit = (image: CloudinaryResource) => {
+  //   setSelectedImage(image);
+  //   setNewImageName(image.public_id.split("/").pop() || "");
+  //   setEditDialogOpen(true);
+  // };
 
-  const handleEditConfirm = async () => {
-    if (!selectedImage || !newImageName.trim()) return;
+  // const handleEditConfirm = async () => {
+  //   if (!selectedImage || !newImageName.trim()) return;
 
-    const result: EditResult = await editImage(
-      selectedImage.public_id,
-      newImageName
-    );
+  //   const result: EditResult = await editImage(
+  //     selectedImage.public_id,
+  //     newImageName
+  //   );
 
-    if (result.success && result.data) {
-      setImages((prev) =>
-        prev.map((img) =>
-          img.public_id === selectedImage.public_id ? result.data! : img
-        )
-      );
-      setSnackbar({
-        open: true,
-        message: "Image renamed successfully",
-        severity: "success",
-      });
-    } else {
-      setSnackbar({
-        open: true,
-        message: result.error || "Edit failed",
-        severity: "error",
-      });
-    }
+  //   if (result.success && result.data) {
+  //     setImages((prev) =>
+  //       prev.map((img) =>
+  //         img.public_id === selectedImage.public_id ? result.data! : img
+  //       )
+  //     );
+  //     setSnackbar({
+  //       open: true,
+  //       message: "Image renamed successfully",
+  //       severity: "success",
+  //     });
+  //   } else {
+  //     setSnackbar({
+  //       open: true,
+  //       message: result.error || "Edit failed",
+  //       severity: "error",
+  //     });
+  //   }
 
-    setEditDialogOpen(false);
-    setSelectedImage(null);
-    setNewImageName("");
-  };
+  //   setEditDialogOpen(false);
+  //   setSelectedImage(null);
+  //   setNewImageName("");
+  // };
 
   const handleSave = (image: CloudinaryResource) => {
     const filename = `${image.public_id.split("/").pop()}.${image.format}`;
@@ -172,36 +172,36 @@ const CloudinaryPage: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Cloudinary Image Manager
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
+        <Typography variant="h4" gutterBottom>
+          Cloudinary Image Manager
+        </Typography>
 
-      <UploadSection
-        isUploading={isUploading}
-        uploadProgress={uploadProgress}
-        onUploadStart={handleUploadStart}
-        onUploadProgress={handleUploadProgress}
-        onUploadComplete={handleUploadComplete}
-        onUploadError={handleUploadError}
-        onImagesRefresh={handleImagesRefresh}
-      />
-
+        <UploadSection
+          isUploading={isUploading}
+          uploadProgress={uploadProgress}
+          onUploadStart={handleUploadStart}
+          onUploadProgress={handleUploadProgress}
+          onUploadComplete={handleUploadComplete}
+          onUploadError={handleUploadError}
+          onImagesRefresh={handleImagesRefresh}
+        />
+      </Box>
       <ImageGrid
         images={images}
         isLoadingImages={isLoadingImages}
-        onEdit={handleEdit}
+        // onEdit={handleEdit}
         onDelete={handleDelete}
         onSave={handleSave}
         onTransform={handleTransform}
         onCopyUrl={handleCopyUrl}
-      />
-
-      <EditImageDialog
-        open={editDialogOpen}
-        newName={newImageName}
-        onClose={() => setEditDialogOpen(false)}
-        onNameChange={setNewImageName}
-        onConfirm={handleEditConfirm}
       />
 
       <Snackbar

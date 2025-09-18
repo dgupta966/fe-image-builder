@@ -110,7 +110,7 @@ const UploadSection: React.FC<UploadSectionProps> = ({
   };
 
   return (
-    <Box sx={{ mb: 3 }}>
+    <Box>
       <Button
         variant="contained"
         startIcon={<CloudUpload />}

@@ -102,7 +102,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       requireAuth: true,
     },
     {
-      text: "Cloudinary",
+      text: "Image Builder",
       path: "/cloudinary",
       icon: <Cloud size={20} />,
       requireAuth: true,

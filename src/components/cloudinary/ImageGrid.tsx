@@ -14,7 +14,7 @@ import { type CloudinaryResource } from "../../services/cloudinary/cloudinarySer
 interface ImageGridProps {
   images: CloudinaryResource[];
   isLoadingImages: boolean;
-  onEdit: (image: CloudinaryResource) => void;
+  // onEdit: (image: CloudinaryResource) => void;
   onDelete: (image: CloudinaryResource) => void;
   onSave: (image: CloudinaryResource) => void;
   onTransform: (image: CloudinaryResource) => void;
@@ -24,7 +24,7 @@ interface ImageGridProps {
 const ImageGrid: React.FC<ImageGridProps> = ({
   images,
   isLoadingImages,
-  onEdit,
+  // onEdit,
   onDelete,
   onSave,
   onTransform,
@@ -114,7 +114,7 @@ const ImageGrid: React.FC<ImageGridProps> = ({
         <CloudinaryImageCard
           key={image.public_id}
           image={image}
-          onEdit={onEdit}
+          // onEdit={onEdit}
           onDelete={onDelete}
           onSave={onSave}
           onTransform={onTransform}
