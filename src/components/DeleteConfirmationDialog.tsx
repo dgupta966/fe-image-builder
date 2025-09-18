@@ -12,10 +12,11 @@ import {
 import { useTheme } from "@mui/material/styles";
 import { Delete } from "@mui/icons-material";
 import type { CloudinaryResource } from "../services/cloudinary/cloudinaryService";
+import type { DriveFile } from "../services/googleDriveService";
 
 interface DeleteConfirmationDialogProps {
   open: boolean;
-  file: CloudinaryResource | null;
+  file: CloudinaryResource | DriveFile | null;
   deleting: boolean;
   onClose: () => void;
   onConfirm: () => void;
@@ -29,7 +30,21 @@ const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({
   onConfirm,
 }) => {
   const theme = useTheme();
-  const isDark = theme.palette.mode === 'dark';
+  const isDark = theme.palette.mode === "dark";
+
+  // Get display name from file
+  const getFileName = (file: CloudinaryResource | DriveFile | null): string => {
+    if (!file) return "";
+    if ("public_id" in file) {
+      // CloudinaryResource
+      return file.public_id.split("/").pop() || file.public_id;
+    } else {
+      // DriveFile
+      return file.name;
+    }
+  };
+
+  const fileName = getFileName(file);
 
   // Theme-based colors
   const colors = {
@@ -40,19 +55,11 @@ const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({
     textPrimary: isDark ? "#ffffff" : "#1a1a1a",
     textSecondary: isDark ? "#e0e0e0" : "#666666",
     textMuted: isDark ? "#cccccc" : "#888888",
-    warningBg: isDark
-      ? "rgba(255, 68, 68, 0.08)"
-      : "rgba(244, 67, 54, 0.08)",
-    warningBorder: isDark
-      ? "rgba(255, 68, 68, 0.2)"
-      : "rgba(244, 67, 54, 0.2)",
+    warningBg: isDark ? "rgba(255, 68, 68, 0.08)" : "rgba(244, 67, 54, 0.08)",
+    warningBorder: isDark ? "rgba(255, 68, 68, 0.2)" : "rgba(244, 67, 54, 0.2)",
     warningText: isDark ? "#ffcccc" : "#d32f2f",
-    buttonBorder: isDark
-      ? "rgba(255, 255, 255, 0.3)"
-      : "rgba(0, 0, 0, 0.23)",
-    buttonHoverBg: isDark
-      ? "rgba(255, 255, 255, 0.1)"
-      : "rgba(0, 0, 0, 0.04)",
+    buttonBorder: isDark ? "rgba(255, 255, 255, 0.3)" : "rgba(0, 0, 0, 0.23)",
+    buttonHoverBg: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.04)",
     shadow: isDark
       ? "0 25px 80px rgba(0, 0, 0, 0.9), 0 0 40px rgba(255, 68, 68, 0.1)"
       : "0 25px 80px rgba(0, 0, 0, 0.1), 0 0 40px rgba(244, 67, 54, 0.05)",
@@ -173,7 +180,7 @@ const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({
             lineHeight: 1.4,
           }}
         >
-          Delete "{file?.public_id.split('/').pop()}"?
+          Delete "{fileName}"?
         </Typography>
         <Box
           sx={{
@@ -210,8 +217,8 @@ const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({
               fontSize: "0.95rem",
             }}
           >
-            The image will be permanently removed from Cloudinary.
-            Consider creating a backup if you might need this file later.
+            The image will be permanently removed from Cloudinary. Consider
+            creating a backup if you might need this file later.
           </Typography>
         </Box>
       </DialogContent>
@@ -221,7 +228,7 @@ const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({
           px: 4,
           py: 3,
           gap: 2,
-          justifyContent: "center",
+          justifyContent: "end",
           flexDirection: { xs: "column", sm: "row" },
         }}
       >
@@ -239,16 +246,11 @@ const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({
             fontSize: "1rem",
             backdropFilter: "blur(10px)",
             minWidth: { xs: "100%", sm: "140px" },
-            "&:hover": {
-              borderColor: isDark ? "rgba(255, 255, 255, 0.6)" : theme.palette.primary.main,
-              bgcolor: colors.buttonHoverBg,
-              transform: "translateY(-2px)",
-              boxShadow: isDark
-                ? "0 8px 25px rgba(255, 255, 255, 0.15)"
-                : "0 8px 25px rgba(0, 0, 0, 0.1)",
-            },
+
             "&:disabled": {
-              borderColor: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.12)",
+              borderColor: isDark
+                ? "rgba(255, 255, 255, 0.1)"
+                : "rgba(0, 0, 0, 0.12)",
               color: theme.palette.action.disabled,
             },
             transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
@@ -280,15 +282,7 @@ const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({
               ? "0 6px 20px rgba(255, 68, 68, 0.4)"
               : "0 6px 20px rgba(244, 67, 54, 0.25)",
             minWidth: { xs: "100%", sm: "180px" },
-            "&:hover": {
-              bgcolor: isDark
-                ? "linear-gradient(45deg, #ff6b6b, #ff8e8e)"
-                : "linear-gradient(45deg, #d32f2f, #b71c1c)",
-              transform: "translateY(-3px)",
-              boxShadow: isDark
-                ? "0 12px 35px rgba(255, 68, 68, 0.6)"
-                : "0 12px 35px rgba(244, 67, 54, 0.4)",
-            },
+
             "&:disabled": {
               bgcolor: theme.palette.action.disabledBackground,
               transform: "none",
