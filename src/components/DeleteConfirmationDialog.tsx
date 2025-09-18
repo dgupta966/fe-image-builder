@@ -11,11 +11,11 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { Delete } from "@mui/icons-material";
-import type { DriveFile } from "../services/googleDriveService.ts";
+import type { CloudinaryResource } from "../services/cloudinary/cloudinaryService";
 
 interface DeleteConfirmationDialogProps {
   open: boolean;
-  file: DriveFile | null;
+  file: CloudinaryResource | null;
   deleting: boolean;
   onClose: () => void;
   onConfirm: () => void;
@@ -173,7 +173,7 @@ const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({
             lineHeight: 1.4,
           }}
         >
-          Delete "{file?.name}"?
+          Delete "{file?.public_id.split('/').pop()}"?
         </Typography>
         <Box
           sx={{
@@ -210,7 +210,7 @@ const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({
               fontSize: "0.95rem",
             }}
           >
-            The image will be permanently removed from your Google Drive.
+            The image will be permanently removed from Cloudinary.
             Consider creating a backup if you might need this file later.
           </Typography>
         </Box>

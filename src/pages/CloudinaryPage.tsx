@@ -12,6 +12,7 @@ import {
 } from "../services/cloudinary/cloudinaryService";
 import UploadSection from "../components/cloudinary/UploadSection";
 import ImageGrid from "../components/cloudinary/ImageGrid";
+import DeleteConfirmationDialog from "../components/DeleteConfirmationDialog";
 // import EditImageDialog from "../components/cloudinary/EditImageDialog";
 
 const CloudinaryPage: React.FC = () => {
@@ -34,6 +35,9 @@ const CloudinaryPage: React.FC = () => {
     message: "",
     severity: "success",
   });
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedImageForDelete, setSelectedImageForDelete] = useState<CloudinaryResource | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const loadImages = async () => {
@@ -56,12 +60,20 @@ const CloudinaryPage: React.FC = () => {
     loadImages();
   }, []);
 
-  const handleDelete = async (image: CloudinaryResource) => {
-    const result: DeleteResult = await deleteImage(image.public_id);
+  const handleDelete = (image: CloudinaryResource) => {
+    setSelectedImageForDelete(image);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!selectedImageForDelete) return;
+
+    setIsDeleting(true);
+    const result: DeleteResult = await deleteImage(selectedImageForDelete.public_id);
 
     if (result.success) {
       setImages((prev) =>
-        prev.filter((img) => img.public_id !== image.public_id)
+        prev.filter((img) => img.public_id !== selectedImageForDelete.public_id)
       );
       setSnackbar({
         open: true,
@@ -75,6 +87,15 @@ const CloudinaryPage: React.FC = () => {
         severity: "error",
       });
     }
+
+    setIsDeleting(false);
+    setDeleteDialogOpen(false);
+    setSelectedImageForDelete(null);
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setSelectedImageForDelete(null);
   };
 
   // const handleEdit = (image: CloudinaryResource) => {
@@ -217,6 +238,14 @@ const CloudinaryPage: React.FC = () => {
           {snackbar.message}
         </Alert>
       </Snackbar>
+
+      <DeleteConfirmationDialog
+        open={deleteDialogOpen}
+        file={selectedImageForDelete}
+        deleting={isDeleting}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+      />
     </Box>
   );
 };
