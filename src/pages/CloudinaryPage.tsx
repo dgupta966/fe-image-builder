@@ -181,7 +181,7 @@ const CloudinaryPage: React.FC = () => {
         }}
       >
         <Typography variant="h4" gutterBottom>
-          Cloudinary Image Manager
+          Image Gallery
         </Typography>
 
         <UploadSection
