@@ -133,7 +133,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   letterSpacing: "-0.025em",
                 }}
               >
-                THUMBLY
+                Image Builder
               </Typography>
             </Box>
             <IconButton onClick={toggleCollapse} sx={toggleButton}>
