@@ -18,6 +18,7 @@ import {
   LogOut,
   User,
   Cloud,
+  Camera,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/useAuth";
@@ -104,7 +105,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     {
       text: "Image Builder",
       path: "/cloudinary",
-      icon: <Cloud size={20} />,
+      icon: <Camera size={20} />,
       requireAuth: true,
     },
   ];

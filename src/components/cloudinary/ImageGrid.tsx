@@ -38,7 +38,9 @@ const ImageGrid: React.FC<ImageGridProps> = ({
           gridTemplateColumns: {
             xs: "repeat(1, 1fr)",
             sm: "repeat(2, 1fr)",
-            md: "repeat(4, 1fr)",
+            md: "repeat(3, 1fr)",
+            lg: "repeat(4, 1fr)",
+            xl: "repeat(5, 1fr)",
           },
           gap: 3,
           width: "100%",
@@ -104,7 +106,9 @@ const ImageGrid: React.FC<ImageGridProps> = ({
         gridTemplateColumns: {
           xs: "repeat(1, 1fr)",
           sm: "repeat(2, 1fr)",
-          md: "repeat(4, 1fr)",
+          md: "repeat(3, 1fr)",
+          lg: "repeat(4, 1fr)",
+          xl: "repeat(5, 1fr)",
         },
         gap: 3,
         width: "100%",
