@@ -10,10 +10,7 @@ import {
   Box,
   Typography,
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
+  Drawer,
   List,
   ListItem,
   ListItemText,
@@ -37,7 +34,7 @@ interface OverlayTabProps {
 }
 
 const OverlayTab: React.FC<OverlayTabProps> = ({ options, updateOption }) => {
-  const [overlayDialogOpen, setOverlayDialogOpen] = useState(false);
+  const [overlayDrawerOpen, setOverlayDrawerOpen] = useState(false);
   const [availableImages, setAvailableImages] = useState<CloudinaryResource[]>(
     []
   );
@@ -45,8 +42,8 @@ const OverlayTab: React.FC<OverlayTabProps> = ({ options, updateOption }) => {
   const [selectedOverlay, setSelectedOverlay] =
     useState<CloudinaryResource | null>(null);
 
-  const handleOpenOverlayDialog = async () => {
-    setOverlayDialogOpen(true);
+  const handleOpenOverlayDrawer = async () => {
+    setOverlayDrawerOpen(true);
     setLoadingImages(true);
     try {
       const images = await getImages();
@@ -68,7 +65,7 @@ const OverlayTab: React.FC<OverlayTabProps> = ({ options, updateOption }) => {
     if (options.overlay_opacity === undefined) {
       updateOption("overlay_opacity", 100);
     }
-    setOverlayDialogOpen(false);
+    setOverlayDrawerOpen(false);
   };
 
   const handleClearOverlay = () => {
@@ -119,7 +116,7 @@ const OverlayTab: React.FC<OverlayTabProps> = ({ options, updateOption }) => {
           <Button
             variant="outlined"
             fullWidth
-            onClick={handleOpenOverlayDialog}
+            onClick={handleOpenOverlayDrawer}
             sx={{ mb: 1 }}
           >
             {options.overlay ? "Change Overlay Image" : "Select Overlay Image"}
@@ -269,51 +266,58 @@ const OverlayTab: React.FC<OverlayTabProps> = ({ options, updateOption }) => {
         </Box>
       </CardContent>
 
-      <Dialog
-        open={overlayDialogOpen}
-        onClose={() => setOverlayDialogOpen(false)}
-        maxWidth="md"
-        fullWidth
+      <Drawer
+        open={overlayDrawerOpen}
+        onClose={() => setOverlayDrawerOpen(false)}
+        anchor="left"
+        sx={{
+          '& .MuiDrawer-paper': {
+            width: 400,
+            padding: 2,
+          },
+        }}
       >
-        <DialogTitle>Select Overlay Image</DialogTitle>
-        <DialogContent>
-          {loadingImages ? (
-            <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
-              <CircularProgress />
-            </Box>
-          ) : (
-            <List sx={{ maxHeight: 400, overflow: "auto" }}>
-              {availableImages.map((image) => (
-                <ListItem key={image.public_id} disablePadding>
-                  <ListItemButton onClick={() => handleSelectOverlay(image)}>
-                    <ListItemAvatar>
-                      <Avatar
-                        src={image.secure_url}
-                        variant="square"
-                        sx={{ width: 56, height: 56 }}
-                      />
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={image.public_id.split("/").pop()}
-                      secondary={`${image.width}x${image.height} • ${image.format}`}
+        <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
+          Select Overlay Image
+        </Typography>
+        
+        {loadingImages ? (
+          <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <List sx={{ maxHeight: 'calc(100vh - 120px)', overflow: "auto" }}>
+            {availableImages.map((image) => (
+              <ListItem key={image.public_id} disablePadding>
+                <ListItemButton onClick={() => handleSelectOverlay(image)}>
+                  <ListItemAvatar>
+                    <Avatar
+                      src={image.secure_url}
+                      variant="square"
+                      sx={{ width: 56, height: 56 }}
                     />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-              {availableImages.length === 0 && !loadingImages && (
-                <Typography
-                  sx={{ p: 2, textAlign: "center", color: "text.secondary" }}
-                >
-                  No images available. Upload some images first.
-                </Typography>
-              )}
-            </List>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOverlayDialogOpen(false)}>Cancel</Button>
-        </DialogActions>
-      </Dialog>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={image.public_id.split("/").pop()}
+                    secondary={`${image.width}x${image.height} • ${image.format}`}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ))}
+            {availableImages.length === 0 && !loadingImages && (
+              <Typography
+                sx={{ p: 2, textAlign: "center", color: "text.secondary" }}
+              >
+                No images available. Upload some images first.
+              </Typography>
+            )}
+          </List>
+        )}
+        
+        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+          <Button onClick={() => setOverlayDrawerOpen(false)}>Cancel</Button>
+        </Box>
+      </Drawer>
     </Card>
   );
 };
