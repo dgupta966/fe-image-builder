@@ -304,13 +304,21 @@ export const getImages = async (): Promise<CloudinaryResource[]> => {
       throw new Error("Cloudinary API secret not configured");
     }
 
+    console.log("Fetching images from Cloudinary...");
+
+    // Use Cloudinary Admin API directly
     const response = await axios.get(`/api/cloudinary/resources/image`, {
-      headers: {
-        Authorization: `Basic ${btoa(`${apiKey}:${apiSecret}`)}`,
+      auth: {
+        username: apiKey,
+        password: apiSecret,
+      },
+      params: {
+        max_results: 10, // Limit results for performance
       },
     });
 
     const data = response.data as CloudinaryResourcesResponse;
+    console.log("Images fetched successfully:", data.resources?.length || 0);
 
     if (data.resources && Array.isArray(data.resources)) {
       return data.resources.map((resource: CloudinaryResource) => ({
@@ -327,8 +335,8 @@ export const getImages = async (): Promise<CloudinaryResource[]> => {
 
     return [];
   } catch (error) {
-    console.error("Error fetching images:", error);
-    throw error;
+    console.error("Error fetching images from Cloudinary:", error);
+    return [];
   }
 };
 
@@ -405,6 +413,14 @@ export interface TransformationOptions {
   text_color?: string;
   text_position?: string;
 
+  // Image overlays
+  overlay?: string; // Public ID of overlay image
+  overlay_position?: string; // Position: north_west, center, south_east, etc.
+  overlay_width?: number;
+  overlay_height?: number;
+  overlay_opacity?: number;
+  overlay_gravity?: string; // Gravity for positioning
+
   // Artistic effects
   cartoonify?: string;
   oil_paint?: number;
@@ -471,6 +487,37 @@ export const buildTransformationUrl = (
     if (options.text_font_weight) textTransform += `,w_${options.text_font_weight}`;
     if (options.text_position) textTransform += `,g_${options.text_position}`;
     transformations.push(textTransform);
+  }
+
+  // Image overlays
+  if (options.overlay) {
+    let overlayTransform: string;
+
+    // Check if it's a full URL or just a public ID
+    if (options.overlay.startsWith('http')) {
+      // External URL - use l_fetch
+      overlayTransform = `l_fetch:${encodeURIComponent(options.overlay)}`;
+    } else {
+      // Public ID - use l_
+      overlayTransform = `l_${encodeURIComponent(options.overlay)}`;
+    }
+
+    // Add positioning first (important for overlay positioning)
+    if (options.overlay_gravity) {
+      overlayTransform += `,g_${options.overlay_gravity}`;
+    } else if (options.overlay_position) {
+      overlayTransform += `,g_${options.overlay_position}`;
+    } else {
+      // Default to center if no position specified
+      overlayTransform += `,g_center`;
+    }
+
+    if (options.overlay_width) overlayTransform += `,w_${options.overlay_width}`;
+    if (options.overlay_height) overlayTransform += `,h_${options.overlay_height}`;
+    if (options.overlay_opacity !== undefined) overlayTransform += `,o_${options.overlay_opacity}`;
+
+    console.log("Adding overlay transformation:", overlayTransform);
+    transformations.push(overlayTransform);
   }
 
   // Artistic effects

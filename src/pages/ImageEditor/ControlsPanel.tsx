@@ -12,6 +12,7 @@ import {
   Palette,
   Compress,
   Star,
+  Layers,
 } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { StyledIconButton } from "../../components/cloudinary/ImageTransformModal.styled";
@@ -37,6 +38,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
     "Filters",
     "Adjust",
     "Text",
+    "Overlay",
     "Artistic",
     "Optimize",
     "Advanced",
@@ -50,6 +52,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
     Filter,
     Tune,
     TextFields,
+    Layers,
     Palette,
     Compress,
     Settings,

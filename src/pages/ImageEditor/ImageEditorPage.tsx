@@ -17,6 +17,7 @@ import EffectsTab from "./EffectsTab";
 import FiltersTab from "./FiltersTab";
 import AdjustTab from "./AdjustTab";
 import TextTab from "./TextTab";
+import OverlayTab from "./OverlayTab";
 import ArtisticTab from "./ArtisticTab";
 import OptimizeTab from "./OptimizeTab";
 import AdvancedTab from "./AdvancedTab";
@@ -225,15 +226,18 @@ const ImageEditorPage: React.FC = () => {
               <TextTab options={options} updateOption={updateOption} />
             )}
             {activeTab === 6 && (
-              <ArtisticTab options={options} updateOption={updateOption} />
+              <OverlayTab options={options} updateOption={updateOption} />
             )}
             {activeTab === 7 && (
-              <OptimizeTab options={options} updateOption={updateOption} />
+              <ArtisticTab options={options} updateOption={updateOption} />
             )}
             {activeTab === 8 && (
-              <AdvancedTab options={options} updateOption={updateOption} />
+              <OptimizeTab options={options} updateOption={updateOption} />
             )}
             {activeTab === 9 && (
+              <AdvancedTab options={options} updateOption={updateOption} />
+            )}
+            {activeTab === 10 && (
               <PresetsTab
                 activePreset={activePreset}
                 onApplyPreset={applyPreset}
