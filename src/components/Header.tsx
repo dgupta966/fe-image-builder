@@ -34,6 +34,7 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
         borderBottom: '1px solid',
         borderColor: 'divider',
         color: 'text.primary',
+        height: 61,
       }}
     >
       <Toolbar sx={{ justifyContent: 'space-between', minHeight: '64px !important' }}>
@@ -80,8 +81,8 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
                   src={user.picture}
                   alt={user.name}
                   sx={{ 
-                    width: 40, 
-                    height: 40,
+                    width: 38, 
+                    height: 38,
                     border: '2px solid',
                     borderColor: 'primary.main',
                   }}
