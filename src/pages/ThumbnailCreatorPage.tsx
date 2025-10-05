@@ -7,10 +7,10 @@ import {
   Button,
   Grid,
   TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
+  // FormControl,
+  // InputLabel,
+  // Select,
+  // MenuItem,
   Paper,
   Avatar,
   LinearProgress,
@@ -147,18 +147,18 @@ const ThumbnailCreatorPage: React.FC = () => {
     }
   };
 
-  const categories = [
-    "Technology",
-    "Food & Cooking",
-    "Travel",
-    "Education",
-    "Entertainment",
-    "Business",
-    "Health & Fitness",
-    "DIY & Crafts",
-    "Music",
-    "Gaming",
-  ];
+  // const categories = [
+  //   "Technology",
+  //   "Food & Cooking",
+  //   "Travel",
+  //   "Education",
+  //   "Entertainment",
+  //   "Business",
+  //   "Health & Fitness",
+  //   "DIY & Crafts",
+  //   "Music",
+  //   "Gaming",
+  // ];
 
   // const styles = [
   //   { value: 'modern', label: 'Modern' },
@@ -247,7 +247,7 @@ const ThumbnailCreatorPage: React.FC = () => {
                 <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
                   <PhotoLibrary sx={{ mr: 1 }} />
                   <Typography variant="h6">
-                    Upload Base Image (Optional)
+                    Upload Image
                   </Typography>
                 </Box>
 
@@ -347,7 +347,7 @@ const ThumbnailCreatorPage: React.FC = () => {
 
                 <TextField
                   fullWidth
-                  label="Description *"
+                  label="Description"
                   multiline
                   rows={4}
                   value={thumbnailOptions.description}
@@ -360,10 +360,9 @@ const ThumbnailCreatorPage: React.FC = () => {
                   sx={{ mb: 3 }}
                   placeholder="Describe what kind of thumbnail you want to create... This is the main input for AI generation."
                   required
-                  helperText="This is the primary input - describe your thumbnail content, style, and visual requirements"
                 />
 
-                <FormControl fullWidth sx={{ mb: 3 }}>
+                {/* <FormControl fullWidth sx={{ mb: 3 }}>
                   <InputLabel>Category (Optional)</InputLabel>
                   <Select
                     value={thumbnailOptions.category}
@@ -381,7 +380,7 @@ const ThumbnailCreatorPage: React.FC = () => {
                       </MenuItem>
                     ))}
                   </Select>
-                </FormControl>
+                </FormControl> */}
 
                 {/* <FormControl fullWidth sx={{ mb: 3 }}>
                   <InputLabel>Style</InputLabel>
