@@ -11,14 +11,14 @@ const THEME_STORAGE_KEY = "Snappixy_theme_preference";
 const ThemeContextProvider: React.FC<ThemeContextProviderProps> = ({
   children,
 }) => {
-  // Initialize theme from localStorage or default to light mode
+  // Initialize theme from localStorage or default to dark mode
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
     try {
       const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-      return savedTheme ? JSON.parse(savedTheme) : false;
+      return savedTheme ? JSON.parse(savedTheme) : true;
     } catch (error) {
       console.warn("Failed to load theme preference from localStorage:", error);
-      return false;
+      return true;
     }
   });
 

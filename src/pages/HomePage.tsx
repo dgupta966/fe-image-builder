@@ -235,7 +235,7 @@ const HomePage: React.FC = () => {
       >
         <Container maxWidth="md" sx={{ position: "relative", zIndex: 1 }}>
           <img
-            src="/public/snapaxxy.png"
+            src="/snapaxxy.png"
             style={{ height: "100px", borderRadius: "20px" ,marginBottom: "20px"}}
           />
 
