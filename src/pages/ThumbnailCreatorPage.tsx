@@ -15,7 +15,6 @@ import {
   Avatar,
   LinearProgress,
   Alert,
-  Divider,
   IconButton,
   Tooltip,
 } from "@mui/material";
@@ -581,62 +580,7 @@ const ThumbnailCreatorPage: React.FC = () => {
           </Grid>
         </Grid>
 
-        <Card sx={{ mt: 4 }}>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              AI-Powered Thumbnail Creation Tips
-            </Typography>
-            <Grid container spacing={3}>
-              <Grid size={{ xs: 12, md: 3 }}>
-                <Typography variant="subtitle2" gutterBottom>
-                  Description Best Practices
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Be specific about visual elements, colors, style, and content.
-                  The more detailed your description, the better the
-                  AI-generated result.
-                </Typography>
-              </Grid>
-              <Grid size={{ xs: 12, md: 3 }}>
-                <Typography variant="subtitle2" gutterBottom>
-                  Image Upload Benefits
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Upload a base image to let Gemini AI analyze and incorporate
-                  visual elements for more personalized thumbnails.
-                </Typography>
-              </Grid>
-              <Grid size={{ xs: 12, md: 3 }}>
-                <Typography variant="subtitle2" gutterBottom>
-                  Color Psychology
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Use contrasting colors for better visibility. Bright colors
-                  attract attention and improve click-through rates.
-                </Typography>
-              </Grid>
-              <Grid size={{ xs: 12, md: 3 }}>
-                <Typography variant="subtitle2" gutterBottom>
-                  AI Enhancement
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Gemini AI analyzes your content and creates thumbnails
-                  optimized for your specific category and style.
-                </Typography>
-              </Grid>
-            </Grid>
-
-            <Divider sx={{ my: 3 }} />
-
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-              <AutoAwesome color="primary" />
-              <Typography variant="body2" color="text.secondary">
-                <strong>Powered by Google Gemini:</strong> Advanced AI vision
-                and text analysis for intelligent thumbnail generation
-              </Typography>
-            </Box>
-          </CardContent>
-        </Card>
+       
       </Box>
     </Box>
   );
