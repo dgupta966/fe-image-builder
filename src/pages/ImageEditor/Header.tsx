@@ -39,7 +39,7 @@ const Header: React.FC<HeaderProps> = ({
           <ArrowBack />
         </IconButton>
         <Typography variant="h5" component="h1">
-          Image Editor
+          Snappixy
         </Typography>
       </Box>
 

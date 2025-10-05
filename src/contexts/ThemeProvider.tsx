@@ -6,7 +6,7 @@ interface ThemeContextProviderProps {
   children: ReactNode;
 }
 
-const THEME_STORAGE_KEY = "thumbly_theme_preference";
+const THEME_STORAGE_KEY = "Snappixy_theme_preference";
 
 const ThemeContextProvider: React.FC<ThemeContextProviderProps> = ({
   children,

@@ -52,7 +52,7 @@ const ProfilePage: React.FC = () => {
         callback: (response: { access_token?: string; error?: string }) => {
           if (response.access_token && user) {
             const updatedUser = { ...user, accessToken: response.access_token };
-            localStorage.setItem('thumbly_user', JSON.stringify(updatedUser));
+            localStorage.setItem('Snappixy_user', JSON.stringify(updatedUser));
             window.location.reload();
           } else {
             alert('Failed to get Google Drive access: ' + (response.error || 'Unknown error'));
@@ -70,7 +70,7 @@ const ProfilePage: React.FC = () => {
   const revokeGoogleDriveAccess = () => {
     if (user) {
       const updatedUser = { ...user, accessToken: undefined };
-      localStorage.setItem('thumbly_user', JSON.stringify(updatedUser));
+      localStorage.setItem('Snappixy_user', JSON.stringify(updatedUser));
       window.location.reload();
     }
   };

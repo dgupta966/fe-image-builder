@@ -24,7 +24,7 @@ const LoginPage: React.FC = () => {
     console.log('LoginPage: isAuthenticated =', isAuthenticated, 'isLoading =', isLoading);
     
     // Also manually check localStorage
-    const savedUser = localStorage.getItem('thumbly_user');
+    const savedUser = localStorage.getItem('Snappixy_user');
     console.log('LoginPage: savedUser in localStorage:', savedUser);
     
     if (isAuthenticated && !isLoading) {
@@ -37,7 +37,7 @@ const LoginPage: React.FC = () => {
   useEffect(() => {
     const handleStorageChange = () => {
       console.log('LoginPage: Storage changed, checking authentication...');
-      const savedUser = localStorage.getItem('thumbly_user');
+      const savedUser = localStorage.getItem('Snappixy_user');
       if (savedUser && !isAuthenticated) {
         console.log('LoginPage: Found user in storage, reloading page to update auth state');
         window.location.reload();
@@ -62,8 +62,8 @@ const LoginPage: React.FC = () => {
       };
       
       console.log('LoginPage: Storing user data and reloading page');
-      localStorage.setItem('thumbly_user', JSON.stringify(userData));
-      localStorage.setItem('thumbly_token', credential);
+      localStorage.setItem('Snappixy_user', JSON.stringify(userData));
+      localStorage.setItem('Snappixy_token', credential);
       window.location.reload(); // Refresh to trigger auth state update
     } catch (error) {
       console.error('Error handling Google sign-in:', error);
@@ -80,14 +80,14 @@ const LoginPage: React.FC = () => {
     // Demo user data
     const demoUserData = {
       id: 'demo-user-123',
-      email: 'demo@thumbly.com',
+      email: 'demo@Snappixy.com',
       name: 'Demo User',
       picture: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
     };
     
     console.log('LoginPage: Storing demo user data');
-    localStorage.setItem('thumbly_user', JSON.stringify(demoUserData));
-    localStorage.setItem('thumbly_token', 'demo-token');
+    localStorage.setItem('Snappixy_user', JSON.stringify(demoUserData));
+    localStorage.setItem('Snappixy_token', 'demo-token');
     
     // Force navigation to dashboard
     console.log('LoginPage: Navigating to dashboard');
@@ -158,7 +158,7 @@ const LoginPage: React.FC = () => {
                 fontWeight: 600,
               }}
             >
-              Welcome to Thumbly
+              Welcome to Snappixy
             </Typography>
             <Typography 
               variant="body1" 
@@ -243,7 +243,7 @@ const LoginPage: React.FC = () => {
                 fontWeight: 600,
               }}
             >
-              Why use Thumbly?
+              Why use Snappixy?
             </Typography>
             <Box component="ul" sx={{ pl: 2.5, m: 0 }}>
               <Box component="li" sx={{ mb: 1 }}>

@@ -1,6 +1,6 @@
-# Google OAuth Setup Guide for Thumbly
+# Google OAuth Setup Guide for Snappixy
 
-This guide will help you set up Google OAuth authentication for the Thumbly application.
+This guide will help you set up Google OAuth authentication for the Snappixy application.
 
 ## Prerequisites
 
@@ -14,7 +14,7 @@ This guide will help you set up Google OAuth authentication for the Thumbly appl
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Click on the project dropdown at the top
 3. Click "New Project"
-4. Enter a project name (e.g., "Thumbly App")
+4. Enter a project name (e.g., "Snappixy App")
 5. Click "Create"
 
 ### 2. Enable Required APIs
@@ -30,7 +30,7 @@ This guide will help you set up Google OAuth authentication for the Thumbly appl
 1. Go to "APIs & Services" > "OAuth consent screen"
 2. Choose "External" user type (unless you have a Google Workspace account)
 3. Fill in the required information:
-   - App name: `Thumbly`
+   - App name: `Snappixy`
    - User support email: Your email
    - Developer contact information: Your email
 4. Add the following scopes:
@@ -45,7 +45,7 @@ This guide will help you set up Google OAuth authentication for the Thumbly appl
 1. Go to "APIs & Services" > "Credentials"
 2. Click "Create Credentials" > "OAuth 2.0 Client IDs"
 3. Choose "Web application" as the application type
-4. Set the name to "Thumbly Web Client"
+4. Set the name to "Snappixy Web Client"
 5. Add Authorized JavaScript origins:
    - `http://localhost:5173` (for development)
    - `http://localhost:5174` (backup port)
@@ -59,7 +59,7 @@ This guide will help you set up Google OAuth authentication for the Thumbly appl
 
 ### 5. Update Environment Variables
 
-1. In your Thumbly project, open the `.env` file
+1. In your Snappixy project, open the `.env` file
 2. Replace the `VITE_GOOGLE_CLIENT_ID` with your actual Client ID:
    ```
    VITE_GOOGLE_CLIENT_ID=your-actual-client-id.apps.googleusercontent.com

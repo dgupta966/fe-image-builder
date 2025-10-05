@@ -40,7 +40,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       setUser(userData);
       setIsAuthenticated(true);
-      localStorage.setItem('thumbly_user', JSON.stringify(userData));
+      localStorage.setItem('Snappixy_user', JSON.stringify(userData));
     } catch (error) {
       console.error('Authentication failed:', error);
     } finally {
@@ -66,7 +66,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         });
 
         // Check if user is already logged in
-        const savedUser = localStorage.getItem('thumbly_user');
+        const savedUser = localStorage.getItem('Snappixy_user');
         console.log('AuthProvider: Checking localStorage for saved user:', savedUser);
         if (savedUser) {
           const parsedUser = JSON.parse(savedUser);
@@ -168,7 +168,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               if (user) {
                 const updatedUser = { ...user, accessToken: response.access_token };
                 setUser(updatedUser);
-                localStorage.setItem('thumbly_user', JSON.stringify(updatedUser));
+                localStorage.setItem('Snappixy_user', JSON.stringify(updatedUser));
               }
               resolve(response.access_token);
             } else {
@@ -190,8 +190,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
-    localStorage.removeItem('thumbly_user');
-    localStorage.removeItem('thumbly_token');
+    localStorage.removeItem('Snappixy_user');
+    localStorage.removeItem('Snappixy_token');
     
     if ((window as any).google?.accounts?.id) {
       (window as any).google.accounts.id.disableAutoSelect();

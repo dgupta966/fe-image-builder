@@ -1,6 +1,6 @@
-# Thumbly - AI-Powered Image Optimization Platform
+# Snappixy - AI-Powered Image Optimization Platform
 
-Thumbly is a modern React application built with TypeScript and Material-UI that provides powerful image optimization and AI-powered thumbnail creation capabilities with seamless Google Drive integration.
+Snappixy is a modern React application built with TypeScript and Material-UI that provides powerful image optimization and AI-powered thumbnail creation capabilities with seamless Google Drive integration.
 
 ## Features
 
@@ -56,7 +56,7 @@ Thumbly is a modern React application built with TypeScript and Material-UI that
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd thumbly
+   cd Snappixy
    ```
 
 2. **Install dependencies**
@@ -205,4 +205,4 @@ This project is licensed under the MIT License.
 
 ---
 
-**Thumbly** - Transforming your images with the power of AI and modern web technology.
+**Snappixy** - Transforming your images with the power of AI and modern web technology.

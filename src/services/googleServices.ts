@@ -4,7 +4,7 @@ export class GoogleDriveService {
   private accessToken: string | null = null;
 
   constructor() {
-    this.accessToken = localStorage.getItem('thumbly_token');
+    this.accessToken = localStorage.getItem('Snappixy_token');
   }
 
   async authenticate(): Promise<boolean> {

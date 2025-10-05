@@ -135,7 +135,7 @@ const HomePage: React.FC = () => {
               backgroundClip: theme.palette.mode === 'dark' ? 'unset' : 'text',
             }}
           >
-            Thumbly
+            Snappixy
           </Typography>
           
           {/* User Avatar or Login Button */}
@@ -233,7 +233,7 @@ const HomePage: React.FC = () => {
               backgroundClip: 'text',
             }}
           >
-            Thumbly
+            Snappixy
           </Typography>
           <Typography
             variant="h4"
@@ -267,9 +267,9 @@ const HomePage: React.FC = () => {
                 ? '0 8px 32px rgba(255, 255, 255, 0.2)'
                 : '0 8px 32px rgba(139, 92, 246, 0.3)',
               '&:hover': {
-                bgcolor: theme.palette.mode === 'dark' ? '#F5F5F5' : '#7C3AED',
-                transform: 'translateY(-2px)',
-                boxShadow: theme.palette.mode === 'dark' 
+                              color: theme.palette.mode === 'dark' ? '#8B5CF6' : '#FFFFFF',
+                bgcolor: theme.palette.mode === 'dark' ? '#EDE9FE' : '#7C3AED',
+                 boxShadow: theme.palette.mode === 'dark' 
                   ? '0 12px 48px rgba(255, 255, 255, 0.3)'
                   : '0 12px 48px rgba(139, 92, 246, 0.4)',
               },
@@ -306,7 +306,7 @@ const HomePage: React.FC = () => {
           color="text.secondary"
           sx={{ mb: 6, maxWidth: '700px', mx: 'auto' }}
         >
-          Watch how Thumbly transforms your images with intelligent optimization and stunning results
+          Watch how Snappixy transforms your images with intelligent optimization and stunning results
         </Typography>
         
         <ImageCarousel 
@@ -431,7 +431,7 @@ const HomePage: React.FC = () => {
             color="text.secondary"
             sx={{ mb: 4, maxWidth: '500px', mx: 'auto' }}
           >
-            Join thousands of creators who trust Thumbly for their image optimization needs
+            Join thousands of creators who trust Snappixy for their image optimization needs
           </Typography>
           <Button
             onClick={handleUserClick}

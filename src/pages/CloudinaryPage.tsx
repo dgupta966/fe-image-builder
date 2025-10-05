@@ -147,7 +147,7 @@ const CloudinaryPage: React.FC = () => {
   };
 
   const handleTransform = (image: CloudinaryResource) => {
-    // Navigate to image editor page with image data as URL parameters
+    // Navigate to Snappixy page with image data as URL parameters
     const params = new URLSearchParams({
       publicId: image.public_id,
       secureUrl: image.secure_url,

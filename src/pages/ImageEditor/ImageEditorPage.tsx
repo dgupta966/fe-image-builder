@@ -171,7 +171,7 @@ const ImageEditorPage: React.FC = () => {
   if (loading) {
     return (
       <Box sx={{ p: 3, textAlign: "center" }}>
-        <Typography>Loading image editor...</Typography>
+        <Typography>Loading Snappixy...</Typography>
       </Box>
     );
   }

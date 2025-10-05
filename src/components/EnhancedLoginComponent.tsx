@@ -22,7 +22,7 @@ const EnhancedLoginComponent: React.FC = () => {
           if (response.access_token && user) {
             // Update the user with the proper access token
             const updatedUser = { ...user, accessToken: response.access_token };
-            localStorage.setItem('thumbly_user', JSON.stringify(updatedUser));
+            localStorage.setItem('Snappixy_user', JSON.stringify(updatedUser));
             window.location.reload(); // Simple way to update the auth context
           } else {
             alert('Failed to get Google Drive access: ' + (response.error || 'Unknown error'));

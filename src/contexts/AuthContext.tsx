@@ -35,7 +35,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               if (user) {
                 const updatedUser = { ...user, accessToken: response.access_token };
                 setUser(updatedUser);
-                localStorage.setItem('thumbly_user', JSON.stringify(updatedUser));
+                localStorage.setItem('Snappixy_user', JSON.stringify(updatedUser));
               }
               resolve(response.access_token);
             } else {
@@ -74,8 +74,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       // First set the user with basic info
       setUser(userData);
-      localStorage.setItem('thumbly_user', JSON.stringify(userData));
-      localStorage.setItem('thumbly_token', credential);
+      localStorage.setItem('Snappixy_user', JSON.stringify(userData));
+      localStorage.setItem('Snappixy_token', credential);
       
       // Immediately try to get a proper Google Drive access token
       console.log('Attempting to get Google Drive access token...');
@@ -84,7 +84,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           console.log('Successfully obtained Google Drive access token');
           const updatedUser = { ...userData, accessToken };
           setUser(updatedUser);
-          localStorage.setItem('thumbly_user', JSON.stringify(updatedUser));
+          localStorage.setItem('Snappixy_user', JSON.stringify(updatedUser));
         } else {
           console.error('Failed to get Google Drive access token - user will need to manually authorize');
           // Set access token to null so components know authentication is incomplete
@@ -104,13 +104,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     // Check if user is already signed in
-    const savedUser = localStorage.getItem('thumbly_user');
+    const savedUser = localStorage.getItem('Snappixy_user');
     if (savedUser) {
       try {
         setUser(JSON.parse(savedUser));
       } catch (error) {
         console.error('Error parsing saved user:', error);
-        localStorage.removeItem('thumbly_user');
+        localStorage.removeItem('Snappixy_user');
       }
     }
 
@@ -264,8 +264,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('thumbly_user');
-    localStorage.removeItem('thumbly_token');
+    localStorage.removeItem('Snappixy_user');
+    localStorage.removeItem('Snappixy_token');
     if (window.google?.accounts?.id) {
       try {
         window.google.accounts.id.disableAutoSelect();
