@@ -51,36 +51,7 @@ export const headerBox = (
   },
 });
 
-export const logoBox: SxProps<Theme> = {
-  p: 1,
-  borderRadius: 2,
-  bgcolor: "primary.main",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-  position: "relative",
-  overflow: "hidden",
-  "&::before": {
-    content: '""',
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    bgcolor: "rgba(255,255,255,0.1)",
-    transform: "translateX(-100%)",
-    transition: "transform 0.6s ease",
-  },
-  "&:hover": {
-    transform: "scale(1.05)",
-    boxShadow: "0 6px 20px rgba(25, 118, 210, 0.3)",
-    "&::before": {
-      transform: "translateX(0)",
-    },
-  },
-};
-
+ 
 export const toggleButton: SxProps<Theme> = {
   color: "text.secondary",
   borderRadius: 2,

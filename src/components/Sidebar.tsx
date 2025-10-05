@@ -9,7 +9,6 @@ import {
   useTheme,
 } from "@mui/material";
 import {
-  Image,
   LayoutDashboard,
   Zap,
   Scissors,
@@ -26,7 +25,6 @@ import { useSidebar } from "../contexts/useSidebar";
 import {
   sidebarWrapper,
   headerBox,
-  logoBox,
   toggleButton,
   navWrapper,
   navItem,
@@ -123,9 +121,15 @@ const Sidebar: React.FC<SidebarProps> = ({
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-              <Box sx={logoBox}>
-                <Image size={24} color="white" />
-              </Box>
+              <img
+                src="/snapaxyMini.png"
+                style={{
+                  height: "30px",
+                  width: "auto",
+                  borderRadius: "6px",
+                  marginTop: "2px",
+                }}
+              />
               <Typography
                 variant="h6"
                 sx={{
@@ -134,7 +138,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   letterSpacing: "-0.025em",
                 }}
               >
-                Image Builder
+                Snappixy
               </Typography>
             </Box>
             <IconButton onClick={toggleCollapse} sx={toggleButton}>
@@ -150,9 +154,10 @@ const Sidebar: React.FC<SidebarProps> = ({
               gap: 2,
             }}
           >
-            <Box sx={logoBox}>
-              <Image size={24} color="white" />
-            </Box>
+            <img
+              src="/snapaxyMini.png"
+              style={{ height: "30px", width: "auto", borderRadius: "6px" }}
+            />
             <IconButton onClick={toggleCollapse} sx={toggleButton}>
               <ChevronRight size={20} />
             </IconButton>
