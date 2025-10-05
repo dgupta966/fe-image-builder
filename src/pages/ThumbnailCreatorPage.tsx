@@ -11,7 +11,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Chip,
   Paper,
   Avatar,
   LinearProgress,
@@ -236,12 +235,10 @@ const ThumbnailCreatorPage: React.FC = () => {
   return (
     <Box sx={{ px: 4 }}>
       <Box sx={{ py: 4 }}>
-        <Typography variant="h4" gutterBottom>
+        <Typography variant="h4" gutterBottom sx={{mb: 2}}>
           AI Thumbnail Creator
         </Typography>
-        <Typography variant="body1" color="text.secondary" paragraph>
-          Create stunning thumbnails with AI-powered design using Google Gemini
-        </Typography>
+       
 
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 6 }}>
@@ -314,12 +311,7 @@ const ThumbnailCreatorPage: React.FC = () => {
                         {uploadedImage.file.name} (
                         {(uploadedImage.file.size / 1024 / 1024).toFixed(2)} MB)
                       </Typography>
-                      <Chip
-                        label="Base64 Converted"
-                        color="success"
-                        size="small"
-                        sx={{ mt: 1 }}
-                      />
+                       
                     </Paper>
                   </Box>
                 )}
@@ -479,9 +471,43 @@ const ThumbnailCreatorPage: React.FC = () => {
           <Grid size={{ xs: 12, md: 6 }}>
             <Card>
               <CardContent>
-                <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-                  <Palette sx={{ mr: 1 }} />
-                  <Typography variant="h6">Generated Thumbnails</Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    mb: 3,
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Palette sx={{ mr: 1 }} />
+                    <Typography variant="h6">Generated Thumbnails</Typography>
+                  </Box>
+
+                  {generatedThumbnails.length > 0 && (
+                    <Box sx={{ display: "flex", gap: 0.5 }}>
+                      <Button
+                        size="small"
+                        startIcon={<Download />}
+                        onClick={() =>
+                          downloadThumbnail(generatedThumbnails[0].imageUrl, 0)
+                        }
+                      >
+                        Download
+                      </Button>
+                      <Button size="small" startIcon={<CloudUpload />}>
+                        Save to Drive
+                      </Button>
+                      <Tooltip title="Generate new thumbnail">
+                        <IconButton
+                          size="small"
+                          onClick={handleGenerateThumbnail}
+                        >
+                          <Refresh />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+                  )}
                 </Box>
 
                 {isGenerating && (
@@ -508,54 +534,21 @@ const ThumbnailCreatorPage: React.FC = () => {
 
                 {generatedThumbnails.length > 0 && (
                   <Grid container spacing={2}>
-                    {generatedThumbnails.map((thumbnail, index) => (
+                    {generatedThumbnails.map((thumbnail) => (
                       <Grid size={{ xs: 12 }} key={thumbnail.id}>
-                        <Paper sx={{ p: 2 }}>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 2,
-                            }}
-                          >
-                            <Avatar
-                              src={thumbnail.imageUrl}
-                              variant="rounded"
-                              sx={{ width: 120, height: 80 }}
-                            />
-                            <Box sx={{ flex: 1 }}>
-                              <Typography variant="subtitle2" gutterBottom>
-                                AI Generated Thumbnail
-                              </Typography>
-
-                              <Box sx={{ display: "flex", gap: 1 }}>
-                                <Button
-                                  size="small"
-                                  startIcon={<Download />}
-                                  onClick={() =>
-                                    downloadThumbnail(thumbnail.imageUrl, index)
-                                  }
-                                >
-                                  Download
-                                </Button>
-                                <Button
-                                  size="small"
-                                  startIcon={<CloudUpload />}
-                                >
-                                  Save to Drive
-                                </Button>
-                                <Tooltip title="Generate new thumbnail">
-                                  <IconButton
-                                    size="small"
-                                    onClick={handleGenerateThumbnail}
-                                  >
-                                    <Refresh />
-                                  </IconButton>
-                                </Tooltip>
-                              </Box>
-                            </Box>
-                          </Box>
-                        </Paper>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 2,
+                          }}
+                        >
+                          <Avatar
+                            src={thumbnail.imageUrl}
+                            variant="rounded"
+                            sx={{ width: "auto", height: "auto" }}
+                          />
+                        </Box>
                       </Grid>
                     ))}
                   </Grid>
