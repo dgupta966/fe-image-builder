@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
-  Container,
   Typography,
   Box,
   Card,
@@ -20,7 +19,7 @@ import {
   Divider,
   IconButton,
   Tooltip,
-} from '@mui/material';
+} from "@mui/material";
 import {
   AutoAwesome,
   Download,
@@ -29,9 +28,9 @@ import {
   PhotoLibrary,
   Close,
   Refresh,
-} from '@mui/icons-material';
-import { type ThumbnailOptions } from '../types/index.ts';
-import { GeminiService } from '../services/googleServices.ts';
+} from "@mui/icons-material";
+import { type ThumbnailOptions } from "../types/index.ts";
+import { generateImage } from "../services/geminiService";
 
 interface UploadedImage {
   file: File;
@@ -48,19 +47,22 @@ interface GeneratedThumbnail {
 }
 
 const ThumbnailCreatorPage: React.FC = () => {
-  const [uploadedImage, setUploadedImage] = useState<UploadedImage | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<UploadedImage | null>(
+    null
+  );
   const [thumbnailOptions, setThumbnailOptions] = useState<ThumbnailOptions>({
-    title: '',
-    description: '',
-    category: '',
-    style: 'modern',
-    primaryColor: '#1976d2',
-    backgroundColor: '#ffffff',
+    title: "",
+    description: "",
+    category: "",
+    style: "modern",
+    primaryColor: "#1976d2",
+    backgroundColor: "#ffffff",
   });
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [generatedThumbnails, setGeneratedThumbnails] = useState<GeneratedThumbnail[]>([]);
-  const [geminiService] = useState(() => new GeminiService());
+  const [generatedThumbnails, setGeneratedThumbnails] = useState<
+    GeneratedThumbnail[]
+  >([]);
   const [error, setError] = useState<string | null>(null);
 
   // Convert file to base64
@@ -69,29 +71,31 @@ const ThumbnailCreatorPage: React.FC = () => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => {
-        if (typeof reader.result === 'string') {
+        if (typeof reader.result === "string") {
           resolve(reader.result);
         } else {
-          reject(new Error('Failed to convert file to base64'));
+          reject(new Error("Failed to convert file to base64"));
         }
       };
       reader.onerror = reject;
     });
   };
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     // Validate file type
-    if (!file.type.startsWith('image/')) {
-      setError('Please upload a valid image file');
+    if (!file.type.startsWith("image/")) {
+      setError("Please upload a valid image file");
       return;
     }
 
     // Validate file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
-      setError('Image size should be less than 10MB');
+      setError("Image size should be less than 10MB");
       return;
     }
 
@@ -99,15 +103,15 @@ const ThumbnailCreatorPage: React.FC = () => {
       setError(null);
       const base64 = await fileToBase64(file);
       const preview = URL.createObjectURL(file);
-      
+
       setUploadedImage({
         file,
         base64,
         preview,
       });
     } catch (error) {
-      console.error('Error processing image:', error);
-      setError('Failed to process the image');
+      console.error("Error processing image:", error);
+      setError("Failed to process the image");
     }
   };
 
@@ -122,8 +126,8 @@ const ThumbnailCreatorPage: React.FC = () => {
   const downloadThumbnail = (thumbnailUrl: string, index: number) => {
     try {
       // Handle base64 images
-      if (thumbnailUrl.startsWith('data:')) {
-        const link = document.createElement('a');
+      if (thumbnailUrl.startsWith("data:")) {
+        const link = document.createElement("a");
         link.href = thumbnailUrl;
         link.download = `ai-thumbnail-${index + 1}-${Date.now()}.png`;
         document.body.appendChild(link);
@@ -131,43 +135,43 @@ const ThumbnailCreatorPage: React.FC = () => {
         document.body.removeChild(link);
       } else {
         // Handle regular URLs
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = thumbnailUrl;
         link.download = `ai-thumbnail-${index + 1}-${Date.now()}.png`;
-        link.target = '_blank';
+        link.target = "_blank";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
       }
     } catch (error) {
-      console.error('Error downloading thumbnail:', error);
-      setError('Failed to download thumbnail. Please try again.');
+      console.error("Error downloading thumbnail:", error);
+      setError("Failed to download thumbnail. Please try again.");
     }
   };
 
   const categories = [
-    'Technology',
-    'Food & Cooking',
-    'Travel',
-    'Education',
-    'Entertainment',
-    'Business',
-    'Health & Fitness',
-    'DIY & Crafts',
-    'Music',
-    'Gaming',
+    "Technology",
+    "Food & Cooking",
+    "Travel",
+    "Education",
+    "Entertainment",
+    "Business",
+    "Health & Fitness",
+    "DIY & Crafts",
+    "Music",
+    "Gaming",
   ];
 
-  const styles = [
-    { value: 'modern', label: 'Modern' },
-    { value: 'classic', label: 'Classic' },
-    { value: 'bold', label: 'Bold' },
-    { value: 'minimal', label: 'Minimal' },
-  ];
+  // const styles = [
+  //   { value: 'modern', label: 'Modern' },
+  //   { value: 'classic', label: 'Classic' },
+  //   { value: 'bold', label: 'Bold' },
+  //   { value: 'minimal', label: 'Minimal' },
+  // ];
 
   const handleGenerateThumbnail = async () => {
-    if (!thumbnailOptions.title || !thumbnailOptions.category) {
-      setError('Please fill in the title and category fields');
+    if (!thumbnailOptions.description) {
+      setError("Please provide a description for the thumbnail");
       return;
     }
 
@@ -176,52 +180,53 @@ const ThumbnailCreatorPage: React.FC = () => {
     setError(null);
 
     try {
-      // Create a direct prompt for image generation
+      // Use description as the primary input for image generation
       setProgress(25);
-      const basePrompt = `Create a professional ${thumbnailOptions.style} style thumbnail for ${thumbnailOptions.category} content with the title "${thumbnailOptions.title}". ${thumbnailOptions.description ? `Description: ${thumbnailOptions.description}` : ''}`;
 
-      console.log('Generating thumbnail with prompt:', basePrompt);
+      // Create enhanced description with optional style information
+      let enhancedDescription = thumbnailOptions.description;
+      if (thumbnailOptions.style && thumbnailOptions.style !== "modern") {
+        enhancedDescription += ` Create this in a ${thumbnailOptions.style} style.`;
+      }
+      if (uploadedImage) {
+        enhancedDescription +=
+          " Incorporate visual elements from the provided reference image.";
+      }
+
+      console.log(
+        "Generating thumbnail with description:",
+        enhancedDescription
+      );
 
       // Generate single thumbnail
       setProgress(50);
-      let thumbnailBase64: string;
-      
-      if (uploadedImage) {
-        // Generate thumbnail with uploaded image using Gemini 2.5 Flash Image
-        setProgress(75);
-        thumbnailBase64 = await geminiService.generateThumbnailWithImage(uploadedImage.base64, {
-          title: thumbnailOptions.title,
-          description: thumbnailOptions.description,
-          category: thumbnailOptions.category,
-          style: thumbnailOptions.style,
-          primaryColor: thumbnailOptions.primaryColor,
-          backgroundColor: thumbnailOptions.backgroundColor,
-        });
-      } else {
-        // Generate thumbnail using text-only with Gemini 2.5 Flash Image
-        setProgress(75);
-        thumbnailBase64 = await geminiService.generateThumbnailImage(basePrompt, {
-          width: 1280,
-          height: 720,
-          style: thumbnailOptions.style,
-        });
-      }
+
+      setProgress(75);
+      const result = await generateImage({
+        description: enhancedDescription,
+        referenceImage: uploadedImage?.file || null,
+      });
+
+      const thumbnailBase64 = result.image;
 
       // Create single thumbnail result
       const thumbnail = {
         id: `thumbnail-${Date.now()}`,
         imageUrl: thumbnailBase64,
-        prompt: uploadedImage ? 'AI-generated thumbnail with uploaded image' : basePrompt,
+        prompt: uploadedImage
+          ? "AI-generated thumbnail with uploaded image"
+          : enhancedDescription,
         style: thumbnailOptions.style,
-        category: thumbnailOptions.category,
+        category: thumbnailOptions.category || "General",
       };
 
       setProgress(100);
       setGeneratedThumbnails([thumbnail]);
-
     } catch (error) {
-      console.error('Thumbnail generation error:', error);
-      setError('Failed to generate thumbnail. Please check your Gemini API key and try again.');
+      console.error("Thumbnail generation error:", error);
+      setError(
+        "Failed to generate thumbnail. Please check your Gemini API key and try again."
+      );
     } finally {
       setIsGenerating(false);
       setTimeout(() => setProgress(0), 1000);
@@ -229,7 +234,7 @@ const ThumbnailCreatorPage: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ px: 4 }}>
+    <Box sx={{ px: 4 }}>
       <Box sx={{ py: 4 }}>
         <Typography variant="h4" gutterBottom>
           AI Thumbnail Creator
@@ -243,7 +248,7 @@ const ThumbnailCreatorPage: React.FC = () => {
             {/* Image Upload Section */}
             <Card sx={{ mb: 3 }}>
               <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
                   <PhotoLibrary sx={{ mr: 1 }} />
                   <Typography variant="h6">
                     Upload Base Image (Optional)
@@ -268,21 +273,26 @@ const ThumbnailCreatorPage: React.FC = () => {
                         onChange={handleImageUpload}
                       />
                     </Button>
-                    <Typography variant="body2" color="text.secondary" align="center">
-                      Upload an image to incorporate into your AI-generated thumbnail designs
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      align="center"
+                    >
+                      Upload an image to incorporate into your AI-generated
+                      thumbnail designs
                     </Typography>
                   </Box>
                 ) : (
                   <Box>
-                    <Paper sx={{ p: 2, position: 'relative' }}>
+                    <Paper sx={{ p: 2, position: "relative" }}>
                       <IconButton
                         size="small"
                         onClick={removeUploadedImage}
                         sx={{
-                          position: 'absolute',
+                          position: "absolute",
                           top: 8,
                           right: 8,
-                          bgcolor: 'background.paper',
+                          bgcolor: "background.paper",
                           boxShadow: 1,
                         }}
                       >
@@ -293,17 +303,23 @@ const ThumbnailCreatorPage: React.FC = () => {
                         src={uploadedImage.preview}
                         alt="Uploaded image"
                         sx={{
-                          width: '100%',
+                          width: "100%",
                           height: 200,
-                          objectFit: 'cover',
+                          objectFit: "cover",
                           borderRadius: 1,
                           mb: 2,
                         }}
                       />
                       <Typography variant="body2" color="text.secondary">
-                        {uploadedImage.file.name} ({(uploadedImage.file.size / 1024 / 1024).toFixed(2)} MB)
+                        {uploadedImage.file.name} (
+                        {(uploadedImage.file.size / 1024 / 1024).toFixed(2)} MB)
                       </Typography>
-                      <Chip label="Base64 Converted" color="success" size="small" sx={{ mt: 1 }} />
+                      <Chip
+                        label="Base64 Converted"
+                        color="success"
+                        size="small"
+                        sx={{ mt: 1 }}
+                      />
                     </Paper>
                   </Box>
                 )}
@@ -319,16 +335,14 @@ const ThumbnailCreatorPage: React.FC = () => {
             {/* Thumbnail Details Section */}
             <Card>
               <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
                   <AutoAwesome sx={{ mr: 1 }} />
-                  <Typography variant="h6">
-                    Thumbnail Details
-                  </Typography>
+                  <Typography variant="h6">Thumbnail Details</Typography>
                 </Box>
 
-                <TextField
+                {/* <TextField
                   fullWidth
-                  label="Title"
+                  label="Title (Optional)"
                   value={thumbnailOptions.title}
                   onChange={(e) =>
                     setThumbnailOptions({
@@ -338,13 +352,13 @@ const ThumbnailCreatorPage: React.FC = () => {
                   }
                   sx={{ mb: 3 }}
                   placeholder="e.g., How to Build a React App"
-                />
+                /> */}
 
                 <TextField
                   fullWidth
-                  label="Description"
+                  label="Description *"
                   multiline
-                  rows={3}
+                  rows={4}
                   value={thumbnailOptions.description}
                   onChange={(e) =>
                     setThumbnailOptions({
@@ -353,14 +367,16 @@ const ThumbnailCreatorPage: React.FC = () => {
                     })
                   }
                   sx={{ mb: 3 }}
-                  placeholder="Brief description of your content..."
+                  placeholder="Describe what kind of thumbnail you want to create... This is the main input for AI generation."
+                  required
+                  helperText="This is the primary input - describe your thumbnail content, style, and visual requirements"
                 />
 
                 <FormControl fullWidth sx={{ mb: 3 }}>
-                  <InputLabel>Category</InputLabel>
+                  <InputLabel>Category (Optional)</InputLabel>
                   <Select
                     value={thumbnailOptions.category}
-                    label="Category"
+                    label="Category (Optional)"
                     onChange={(e) =>
                       setThumbnailOptions({
                         ...thumbnailOptions,
@@ -376,7 +392,7 @@ const ThumbnailCreatorPage: React.FC = () => {
                   </Select>
                 </FormControl>
 
-                <FormControl fullWidth sx={{ mb: 3 }}>
+                {/* <FormControl fullWidth sx={{ mb: 3 }}>
                   <InputLabel>Style</InputLabel>
                   <Select
                     value={thumbnailOptions.style}
@@ -394,9 +410,9 @@ const ThumbnailCreatorPage: React.FC = () => {
                       </MenuItem>
                     ))}
                   </Select>
-                </FormControl>
+                </FormControl> */}
 
-                <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+                {/* <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
                   <TextField
                     label="Primary Color"
                     type="color"
@@ -421,39 +437,38 @@ const ThumbnailCreatorPage: React.FC = () => {
                     }
                     sx={{ flex: 1 }}
                   />
-                </Box>
+                </Box> */}
 
                 <Button
                   variant="contained"
                   fullWidth
                   size="large"
                   onClick={handleGenerateThumbnail}
-                  disabled={!thumbnailOptions.title || !thumbnailOptions.category || isGenerating}
-                  startIcon={<AutoAwesome />}
+                  disabled={!thumbnailOptions.description || isGenerating}
                   sx={{
-                    background: uploadedImage 
-                      ? 'linear-gradient(45deg, #8B5CF6 30%, #7C3AED 90%)'
+                    background: uploadedImage
+                      ? "linear-gradient(45deg, #8B5CF6 30%, #7C3AED 90%)"
                       : undefined,
-                    '&:hover': {
-                      background: uploadedImage 
-                        ? 'linear-gradient(45deg, #7C3AED 30%, #6D28D9 90%)'
+                    "&:hover": {
+                      background: uploadedImage
+                        ? "linear-gradient(45deg, #7C3AED 30%, #6D28D9 90%)"
                         : undefined,
                     },
                   }}
                 >
-                  {isGenerating 
-                    ? 'Generating...' 
+                  {isGenerating
+                    ? "Generating..."
                     : uploadedImage
-                      ? 'Generate AI Thumbnail with Image'
-                      : 'Generate AI Thumbnail'
-                  }
+                    ? "Generate AI Thumbnail with Image"
+                    : "Generate AI Thumbnail"}
                 </Button>
-                
+
                 {uploadedImage && (
                   <Alert severity="info" sx={{ mt: 2 }}>
                     <Typography variant="body2">
-                      <strong>AI Enhancement Active:</strong> Your uploaded image will be analyzed by Gemini AI 
-                      to create thumbnails that incorporate visual elements from your image.
+                      <strong>AI Enhancement Active:</strong> Your uploaded
+                      image will be analyzed by Gemini AI to create thumbnails
+                      that incorporate visual elements from your image.
                     </Typography>
                   </Alert>
                 )}
@@ -464,28 +479,25 @@ const ThumbnailCreatorPage: React.FC = () => {
           <Grid size={{ xs: 12, md: 6 }}>
             <Card>
               <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
                   <Palette sx={{ mr: 1 }} />
-                  <Typography variant="h6">
-                    Generated Thumbnails
-                  </Typography>
+                  <Typography variant="h6">Generated Thumbnails</Typography>
                 </Box>
 
                 {isGenerating && (
                   <Box sx={{ mb: 3 }}>
                     <Typography variant="body2" gutterBottom>
-                      {progress < 25 
-                        ? 'Initializing Gemini 2.5 Flash Image...'
+                      {progress < 25
+                        ? "Initializing Gemini 2.5 Flash Image..."
                         : progress < 50
-                        ? 'Preparing thumbnail generation...'
+                        ? "Preparing thumbnail generation..."
                         : progress < 75
-                        ? uploadedImage 
-                          ? 'Processing uploaded image with Gemini AI...'
-                          : 'Creating AI thumbnail design...'
+                        ? uploadedImage
+                          ? "Processing uploaded image with Gemini AI..."
+                          : "Creating AI thumbnail design..."
                         : progress < 100
-                        ? 'Generating thumbnail with Nano Banana...'
-                        : 'Finalizing thumbnail...'
-                      }
+                        ? "Generating thumbnail with Nano Banana..."
+                        : "Finalizing thumbnail..."}
                     </Typography>
                     <LinearProgress variant="determinate" value={progress} />
                     <Typography variant="body2" sx={{ mt: 1 }}>
@@ -499,7 +511,13 @@ const ThumbnailCreatorPage: React.FC = () => {
                     {generatedThumbnails.map((thumbnail, index) => (
                       <Grid size={{ xs: 12 }} key={thumbnail.id}>
                         <Paper sx={{ p: 2 }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 2,
+                            }}
+                          >
                             <Avatar
                               src={thumbnail.imageUrl}
                               variant="rounded"
@@ -509,30 +527,28 @@ const ThumbnailCreatorPage: React.FC = () => {
                               <Typography variant="subtitle2" gutterBottom>
                                 AI Generated Thumbnail
                               </Typography>
-                              <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
-                                <Chip size="small" label={thumbnail.style} />
-                                <Chip size="small" label={thumbnail.category} />
-                                {uploadedImage && (
-                                  <Chip size="small" label="Image-Enhanced" color="primary" />
-                                )}
-                                <Chip size="small" label="Nano Banana" color="secondary" />
-                              </Box>
-                              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
-                                Generated with Gemini 2.5 Flash Image
-                              </Typography>
-                              <Box sx={{ display: 'flex', gap: 1 }}>
-                                <Button 
-                                  size="small" 
+
+                              <Box sx={{ display: "flex", gap: 1 }}>
+                                <Button
+                                  size="small"
                                   startIcon={<Download />}
-                                  onClick={() => downloadThumbnail(thumbnail.imageUrl, index)}
+                                  onClick={() =>
+                                    downloadThumbnail(thumbnail.imageUrl, index)
+                                  }
                                 >
                                   Download
                                 </Button>
-                                <Button size="small" startIcon={<CloudUpload />}>
+                                <Button
+                                  size="small"
+                                  startIcon={<CloudUpload />}
+                                >
                                   Save to Drive
                                 </Button>
                                 <Tooltip title="Generate new thumbnail">
-                                  <IconButton size="small" onClick={handleGenerateThumbnail}>
+                                  <IconButton
+                                    size="small"
+                                    onClick={handleGenerateThumbnail}
+                                  >
                                     <Refresh />
                                   </IconButton>
                                 </Tooltip>
@@ -548,21 +564,21 @@ const ThumbnailCreatorPage: React.FC = () => {
                 {!isGenerating && generatedThumbnails.length === 0 && (
                   <Box
                     sx={{
-                      textAlign: 'center',
+                      textAlign: "center",
                       py: 4,
-                      color: 'text.secondary',
+                      color: "text.secondary",
                     }}
                   >
                     <AutoAwesome sx={{ fontSize: 48, mb: 2 }} />
                     <Typography variant="body1" gutterBottom>
-                      {uploadedImage 
-                        ? 'Ready to create an AI thumbnail with your uploaded image!'
-                        : 'Fill in the details and click "Generate Thumbnail" to create an AI-powered design'
-                      }
+                      {uploadedImage
+                        ? "Ready to create an AI thumbnail with your uploaded image!"
+                        : 'Add a description and click "Generate Thumbnail" to create an AI-powered design'}
                     </Typography>
                     {uploadedImage && (
                       <Typography variant="body2" color="primary">
-                        Gemini AI will analyze your image and incorporate its elements into the thumbnail design.
+                        Gemini AI will analyze your image and incorporate its
+                        elements into the thumbnail design.
                       </Typography>
                     )}
                   </Box>
@@ -580,10 +596,12 @@ const ThumbnailCreatorPage: React.FC = () => {
             <Grid container spacing={3}>
               <Grid size={{ xs: 12, md: 3 }}>
                 <Typography variant="subtitle2" gutterBottom>
-                  Title Best Practices
+                  Description Best Practices
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Keep titles short and impactful. Use action words and numbers when relevant.
+                  Be specific about visual elements, colors, style, and content.
+                  The more detailed your description, the better the
+                  AI-generated result.
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, md: 3 }}>
@@ -591,7 +609,8 @@ const ThumbnailCreatorPage: React.FC = () => {
                   Image Upload Benefits
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Upload a base image to let Gemini AI analyze and incorporate visual elements for more personalized thumbnails.
+                  Upload a base image to let Gemini AI analyze and incorporate
+                  visual elements for more personalized thumbnails.
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, md: 3 }}>
@@ -599,7 +618,8 @@ const ThumbnailCreatorPage: React.FC = () => {
                   Color Psychology
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Use contrasting colors for better visibility. Bright colors attract attention and improve click-through rates.
+                  Use contrasting colors for better visibility. Bright colors
+                  attract attention and improve click-through rates.
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, md: 3 }}>
@@ -607,23 +627,25 @@ const ThumbnailCreatorPage: React.FC = () => {
                   AI Enhancement
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Gemini AI analyzes your content and creates thumbnails optimized for your specific category and style.
+                  Gemini AI analyzes your content and creates thumbnails
+                  optimized for your specific category and style.
                 </Typography>
               </Grid>
             </Grid>
-            
+
             <Divider sx={{ my: 3 }} />
-            
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               <AutoAwesome color="primary" />
               <Typography variant="body2" color="text.secondary">
-                <strong>Powered by Google Gemini:</strong> Advanced AI vision and text analysis for intelligent thumbnail generation
+                <strong>Powered by Google Gemini:</strong> Advanced AI vision
+                and text analysis for intelligent thumbnail generation
               </Typography>
             </Box>
           </CardContent>
         </Card>
       </Box>
-    </Container>
+    </Box>
   );
 };
 

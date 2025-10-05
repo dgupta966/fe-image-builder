@@ -34,9 +34,9 @@ export interface OptimizationOptions {
 }
 
 export interface ThumbnailOptions {
-  title: string;
+  title?: string;
   description: string;
-  category: string;
+  category?: string;
   style: 'modern' | 'classic' | 'bold' | 'minimal';
   primaryColor?: string;
   backgroundColor?: string;
